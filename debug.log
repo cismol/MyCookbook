@@ -1,0 +1,4 @@
+[0510/090644.836:ERROR:process_info.cc(329)] VirtualQueryEx: Zugriff verweigert (0x5)
+[0510/090644.841:ERROR:process_info.cc(550)] ReadMemoryInfo failed
+[0510/090644.841:ERROR:process_memory_win.cc(39)] Failed to initialize ProcessInfo.
+[0510/090644.841:ERROR:scoped_process_suspend.cc(40)] NtResumeProcess: Es wurde versucht, auf einen Prozess zuzugreifen, der gerade beendet wurde. (0xc000010a)
