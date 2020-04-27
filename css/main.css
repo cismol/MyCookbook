@@ -6,6 +6,10 @@
 /* =================================== */
 /*  Basic Style 
 /* =================================== */
+
+p {
+	color: black;
+}
 ::-webkit-input-placeholder {
   /* WebKit, Blink, Edge */
   color: #777777;
