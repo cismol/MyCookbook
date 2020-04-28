@@ -27,6 +27,7 @@
 		<link rel="stylesheet" href="css/bootstrap.css">
 		<link rel="stylesheet" href="css/main.css">
 	</head>
+	
 	<body>
 		<!-- Header Area -->
 		<div class="main-wrapper-first">
@@ -92,14 +93,18 @@
 								<br/>
 								<br/>
 								<br/>
-								<br/>
-								<A style="color:grey;" HREF="mailto:timmi.struppi@gmail.com">Kontakt: timmi.struppi@gmail.com</A>
+								<A style="color:grey;" HREF="mailto:timmi.struppi@gmail.com">Kontakt: timmi.struppi@gmail.com</A><br/>
+								<button class="btn1">Karte anzeigen</button>
+								<div class="testDiv1">
+									<br/>
+									<div style="width: 100%"><iframe width="100%" height="300" src="https://maps.google.com/maps?width=100%&amp;height=600&amp;hl=en&amp;q=gran%20canaria+(My%20Business%20Name)&amp;ie=UTF8&amp;t=&amp;z=14&amp;iwloc=B&amp;output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"><a href="https://www.maps.ie/draw-radius-circle-map/">Create radius map</a></iframe></div><br />
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 				<hr>
-				
+
 				<div class="container border-top-generic p-40">
 					<div class="row">
 						<div class="col-md-12">
@@ -111,8 +116,12 @@
 								<br/>
 								<br/>
 								<br/>
-								<br/>
-								<A style="color:grey;" HREF="mailto:benjamin.blümchen@gmail.com">Kontakt: benjamin.blümchen@gmail.com</A>
+								<A style="color:grey;" HREF="mailto:benjamin.blümchen@gmail.com">Kontakt: benjamin.blümchen@gmail.com</A><br/>
+								<button class="btn2">Karte anzeigen</button>
+								<div class="testDiv2">
+									<br/>
+									<div style="width: 100%"><iframe width="100%" height="300" src="https://maps.google.com/maps?width=100%&amp;height=600&amp;hl=en&amp;q=australien+(My%20Business%20Name)&amp;ie=UTF8&amp;t=&amp;z=5&amp;iwloc=B&amp;output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"><a href="https://www.maps.ie/draw-radius-circle-map/">km radius map</a></iframe></div><br />
+								</div>
 							</div>
 						</div>
 					</div>
@@ -130,8 +139,11 @@
 								<br/>
 								<br/>
 								<br/>
-								<br/>
-								<A style="color:grey;" HREF="mailto:räuber.hotzenplotz@outlook.ch">Kontakt: räuber.hotzenplotz@outlook.ch</A>
+								<A style="color:grey;" HREF="mailto:räuber.hotzenplotz@outlook.ch">Kontakt: räuber.hotzenplotz@outlook.ch</A><br/>
+								<button class="btn3">Karte anzeigen</button>
+								<div class="testDiv3">
+									<br/>
+									<div style="width: 100%"><iframe width="100%" height="300" src="https://maps.google.com/maps?width=100%&amp;height=300&amp;hl=en&amp;q=teneriffa+(My%20Business%20Name)&amp;ie=UTF8&amp;t=&amp;z=11&amp;iwloc=B&amp;output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"><a href="https://www.maps.ie/draw-radius-circle-map/">Google Maps radius calculator</a></iframe></div><br />								</div>
 							</div>
 						</div>
 					</div>
@@ -184,5 +196,22 @@
 		<script src="js/jquery.nice-select.min.js"></script>
 		<script src="js/jquery.magnific-popup.min.js"></script>
 		<script src="js/main.js"></script>
+		
+		<script>
+			$(document).ready(function(){
+				$(".testDiv1").hide();
+				$(".testDiv2").hide();
+				$(".testDiv3").hide();
+			  $(".btn1").click(function(){
+				$(".testDiv1").show();
+			  });
+			  $(".btn2").click(function(){
+				$(".testDiv2").show();
+			  });
+			  $(".btn3").click(function(){
+				$(".testDiv3").show();
+			  });
+			});
+		</script>
 	</body>
 </html>
