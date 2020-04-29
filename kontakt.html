@@ -3,8 +3,8 @@
 <head>
 	<!-- Mobile Specific Meta -->
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<!-- Favicon-->
-	<link rel="shortcut icon" href="img/fav.png">
+	<!-- Favicon
+	<link rel="shortcut icon" href="img/fav.png">-->
 	<!-- Author Meta -->
 	<meta name="author" content="CodePixar">
 	<!-- Meta Description -->
@@ -14,10 +14,9 @@
 	<!-- meta character set -->
 	<meta charset="UTF-8">
 	<!-- Site Title -->
-	<title>MyDrinks</title>
-	<link rel="icon" href="img/icon.png">
+	<title>HomeRent</title>
 
-	<link href="https://fonts.googleapis.com/css?family=Poppins:300,500,600" rel="stylesheet">
+	
 		<!--
 		CSS
 		============================================= -->
@@ -29,19 +28,21 @@
 		<link rel="stylesheet" href="css/main.css">
 	</head>
 	<body>
+		<!-- Header Area -->
 		<div class="main-wrapper-first">
 			<header>
-				<div class="container">
+				<div class="container" style="background-color:black;">
 					<div class="header-wrap">
 						<div class="header-top d-flex justify-content-between align-items-center">
 							<div class="logo">
-								<img src="img/logo.png" alt="">
+								<a href="index.html"><img src="img/logo.png" alt=""></a>
 							</div>
 							<div class="main-menubar d-flex align-items-center">
 								<nav class="hide">
 									<a href="index.html">Home</a>
-									<a href="generic.html">Generic</a>
-									<a href="elements.html">Elements</a>
+									<a href="mietobjekte.html">Mietobjekte</a>
+									<a href="kontakt.html">Kontakt</a>
+									<a href="links.html">Links</a>
 								</nav>
 								<div class="menu-bar"><span class="lnr lnr-menu"></span></div>
 							</div>
@@ -50,90 +51,75 @@
 				</div>
 			</header>
 		</div>
+		<!-- End Header Area -->
+		<!-- Banner Area -->
 		<div class="main-wrapper">
-			<div class="banner-area pt-150 pb-150">
+			<div class="banner-area" style="background-color:black;">
 				<div class="container">
-					<div class="row justify-content-center generic-height align-items-center">
-						<div class="col-lg-8">
-							<div class="banner-content text-center">
-								<h1 class="text-white">Kontakt</h1>
-								<span class="text-white top">It won’t be a bigger problem to find one video game lover in your neighbor. Since the introduction of Virtual Game.</span>
+					<div class="row height justify-content-center align-items-center">
+						<div class="col-lg-5 col-sm-6 col-xs-6">
+							<div class="banner-content">
+								<h1>Kontakt</h1>
+								
+								<!-- <button class="primary-btn white-bg d-inline-flex align-items-center mt-10 ml-auto"><span class="mr-10">Send Message</span><span class="lnr lnr-arrow-right"></span></button> -->
+
+								<!-- <div id="filesubmit">
+								  <input type="file" class="file-select" accept="image/*"/>
+								  <button class="file-submit">SUBMIT</button>
+								</div>-->
 							</div>
+						</div>
+						<div class="col-lg-5 col-sm-6 col-xs-6">
+							<img class="img-fluid mx-auto" src="https://firebasestorage.googleapis.com/v0/b/m152-bildergalerie.appspot.com/o/images%2FProperty-2ed90412f0a8c5e7fdfcdea50b44bbe0-84473745.jpg?alt=media&token=6f50fcee-db2c-42ae-8c08-dbc8bafc86cc" alt="">
 						</div>
 					</div>
 				</div>
 			</div>
-
+		</div>
+		<!-- End Banner Area -->
+		<div class="main-wrapper">
 			<!-- Start Generic Feature Area -->
 			<section class="featured-area">
-			
-			
-			
-			
-			
-			
-			<div id="paypal-button"></div>
-<script src="https://www.paypalobjects.com/api/checkout.js"></script>
-<script>
-  paypal.Button.render({
-    // Configure environment
-    env: 'sandbox',
-    client: {
-      sandbox: 'AcubDTDQGUSSFS6E_EQBPZ8N533d29utfYsZbJVxaypvD8Vn2_tl3QfYDtmVy56xJMWwnE-OmNX0gn2B'
-    },
-    // Customize button (optional)
-    locale: 'en_US',
-    style: {
-      size: 'small',
-      color: 'gold',
-      shape: 'pill',
-    },
-
-    // Enable Pay Now checkout flow (optional)
-    commit: true,
-
-    // Set up a payment
-    payment: function(data, actions) {
-      return actions.payment.create({
-        transactions: [{
-          amount: {
-            total: '0.20',
-            currency: 'CHF'
-          }
-        }]
-      });
-    },
-    // Execute the payment
-    onAuthorize: function(data, actions) {
-      return actions.payment.execute().then(function() {
-        // Show a confirmation message to the buyer
-        window.alert('Thank you for your purchase!');
-      });
-    }
-  }, '#paypal-button');
-
-</script>
-			
-			
-			
-			
-			
-			
-	
-				
-				
-				
-				
-				
-				
+			<div class="container">
+			<br/> 
+				<h1>Kontakt</h1>
+				<p>Hans Meier <br/> Beispielstrasse 69 <br/> 4200 Irgendwo</p>
+				<A style="color:grey;" HREF="mailto:hans.meier@gmail.com">Kontakt: hans.meier@gmail.com</A><br/>
+			</div>
+			<br/> 
 			</section>
-			<!-- End Newsletter Area -->
+			
+			
+			
+			<!-- End Feature Area -->
 
+			<!-- Newsletter Area -->
+			<section class="newsletter-area pt-60 pb-60">
+				<div class="container">
+					<div class="row justify-content-center align-items-center">
+						<div class="text-center">
+							<h3>Newsletter</h3>
+							<p>Keine Werbung wird versendet</p>
+							<div class="subcribe-form" id="mc_embed_signup">
+								<form target="_blank" novalidate action="https://spondonit.us12.list-manage.com/subscribe/post?u=1462626880ade1ac87bd9c93a&id=92a4423d01" method="get" class="subscription relative">
+										<input type="email" name="EMAIL" placeholder="Email address" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Email address'" required>
+										<div style="position: absolute; left: -5000px;">
+											<input type="text" name="b_36c4fd991d266f23781ded980_aefe40901a" tabindex="-1" value="">
+										</div>
+										<button class="primary-btn hover d-inline-flex align-items-center"><span class="mr-10">Get Started</span><span class="lnr lnr-arrow-right"></span></button>
+										<div class="info"></div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			<!-- End Newsletter Area  -->
 			<!-- Start footer Area -->
-			<footer class="footer-area pt-60 pb-60">
+			<footer class="footer-area relative pt-60 pb-60">
 				<div class="container">
 					<div class="footer-content d-flex flex-column align-items-center">
-						<div class="text-center copy-right-text">Copyright &copy; 2017 All rights reserved   |   This template is made with <i class="fa fa-heart"></i> by <a href="https://colorlib.com">Colorlib</a></div>
+						<div class="text-center copy-right-text">Copyright &copy; 2019 All rights reserved  by Cisco Molnár</div>
 						<div class="footer-social">
 							<a href="#"><i class="fa fa-facebook"></i></a>
 							<a href="#"><i class="fa fa-twitter"></i></a>
