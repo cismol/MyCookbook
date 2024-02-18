@@ -1,266 +1,250 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>Shop Homepage - Start Bootstrap Template</title>
-        <!-- Favicon-->
-        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
-        <!-- Core theme CSS (includes Bootstrap)-->
-        <link href="css/styles.css" rel="stylesheet" />
-    </head>
-    <body>
-        <!-- Navigation-->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container">
-                <a class="navbar-brand" href="#!">My Gin</a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                <div class="collapse navbar-collapse" id="navbarResponsive">
-                 <!--   <ul class="navbar-nav ml-auto">
-                        <li class="nav-item active">
-                            <a class="nav-link" href="#!">
-                                Home
-                                <span class="sr-only">(current)</span>
-                            </a>
-                        </li>
-                        <li class="nav-item"><a class="nav-link" href="#!">About</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#!">Services</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#!">Contact</a></li>
-                    </ul> -->
-                </div>
-            </div>
-        </nav>
-        <!-- Page Content-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Cookbook</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+        }
+        nav a:hover {
+            background-color: #555;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .recipe {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .recipe img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .recipe h2 {
+            margin-bottom: 10px;
+        }
+        .recipe p {
+            margin-bottom: 10px;
+        }
+        .recipe-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .edit-btn, .delete-btn {
+            padding: 8px 16px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .edit-btn:hover, .delete-btn:hover {
+            background-color: #555;
+        }
+        .upload-btn {
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .upload-btn:hover {
+            background-color: #555;
+        }
+        .upload-form {
+            display: none;
+        }
+        .upload-form input[type=text], .upload-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        .upload-form input[type=file] {
+            margin-bottom: 10px;
+        }
+        .upload-form button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .upload-form button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
 
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3">
-                    <h1 class="my-4">Gin</h1> <!-- Text top left corner -->
-                    <div class="list-group">
-                        <a class="list-group-item" href="index.html">Gin</a>
-                        <a class="list-group-item" href="/pages/tonic.html">Tonic</a>
-                        <a class="list-group-item" href="/pages/other.html">Other</a>
-                    </div>
-                </div>
-                <div class="col-lg-9">
-                    <div class="carousel slide my-4" id="carouselExampleIndicators" data-ride="carousel">
-                        <ol class="carousel-indicators">
-                            <li class="active" data-target="#carouselExampleIndicators" data-slide-to="0"></li>
-                            <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                            <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-                        </ol>
-                        <div class="carousel-inner" role="listbox">
-                            <div class="carousel-item active"><img class="d-block img-fluid" src="https://via.placeholder.com/900x350" alt="First slide" /></div>
-                            <div class="carousel-item"><img class="d-block img-fluid" src="https://via.placeholder.com/900x350" alt="Second slide" /></div>
-                            <div class="carousel-item"><img class="d-block img-fluid" src="https://via.placeholder.com/900x350" alt="Third slide" /></div>
-                        </div>
-                        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                            <span class="sr-only">Previous</span>
-                        </a>
-                        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                            <span class="sr-only">Next</span>
-                        </a>
-                    </div>
-                    <div class="row">
-						<!-- Template
-						
-						<div class="col-lg-4 col-md-6 mb-4">
-                            <div class="card h-100">
-                                <a href="#!"><img class="card-img-top" src="---imgLink---" alt="..." /></a>
-                                <div class="card-body">
-                                    <h4 class="card-title"><a href="#!">---GinName---</a></h4>
-                                    <h5>00 Fr.</h5>
-                                    <p class="card-text">---Text---<br/><b>Tonic: </b> --- <br/><b>Beilage: </b> ---</p>
-                                </div>
-                                <div class="card-footer"><small class="text-muted">★ ★ ★ ★ ☆</small></div>
-                            </div>
-                        </div>
-						-->
-						
-                        <div class="col-lg-4 col-md-6 mb-4">
-                            <div class="card h-100">
-                                <a href="#!"><img class="card-img-top" src="https://firebasestorage.googleapis.com/v0/b/m152-bildergalerie.appspot.com/o/images%2FGin_Botanist.jpeg?alt=media&token=6d072d92-44c6-425c-b2ee-d28f5609d352" alt="..." /></a>
-                                <div class="card-body">
-                                    <h4 class="card-title"><a href="#!">The Botanist</a></h4>
-                                    <h5>49 Fr.</h5>
-                                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur!</p>
-                                </div>
-                                <div class="card-footer"><small class="text-muted">★ ★ ★ ★ ☆</small></div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 mb-4">
-                            <div class="card h-100">
-                                <a href="#!"><img class="card-img-top" src="https://firebasestorage.googleapis.com/v0/b/m152-bildergalerie.appspot.com/o/images%2FGin_Falcon.jpeg?alt=media&token=63acc6be-82be-4dcb-b60a-b7366e6fbbc8" alt="..." /></a>
-                                <div class="card-body">
-                                    <h4 class="card-title"><a href="#!">Falco</a></h4>
-                                    <h5>59 Fr.</h5>
-                                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet numquam aspernatur! Lorem ipsum dolor sit amet.</p>
-                                </div>
-                                <div class="card-footer"><small class="text-muted">★ ★ ★ ★ ★</small></div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 mb-4">
-                            <div class="card h-100">
-                                <a href="#!"><img class="card-img-top" src="https://firebasestorage.googleapis.com/v0/b/m152-bildergalerie.appspot.com/o/images%2FGin_Harahorn.jpeg?alt=media&token=0fc7c0b3-cf7b-444f-af28-1825c05f8ab2" alt="..." /></a>
-                                <div class="card-body">
-                                    <h4 class="card-title"><a href="#!">Harahorn</a></h4>
-                                    <h5>39 Fr.</h5>
-                                    <p class="card-text">Ein schwedischer Gin, fein im Abgang. <br/><b>Tonic: </b>Blau <br/><b> Beilage: </b>Rosmarin</p>
-                                </div>
-                                <div class="card-footer"><small class="text-muted">★ ★ ★ ★ ☆</small></div>
-                            </div>
-                        </div>
-                        <div class="col-lg-4 col-md-6 mb-4">
-                            <div class="card h-100">
-                                <a href="#!"><img class="card-img-top" src="https://firebasestorage.googleapis.com/v0/b/m152-bildergalerie.appspot.com/o/images%2FGin_Bacur.jpeg?alt=media&token=ae90d7cc-96de-4127-a789-7dc386cc8496" alt="..." /></a>
-                                <div class="card-body">
-                                    <h4 class="card-title"><a href="#!">Bacur</a></h4>
-                                    <h5>00 Fr.</h5>
-                                    <p class="card-text">---Text---<br/><b>Tonic: </b> --- <br/><b>Beilage: </b> ---</p>
-                                </div>
-                                <div class="card-footer"><small class="text-muted">★ ★ ★ ★ ☆</small></div>
-                            </div>
-                        </div>
-						<div class="col-lg-4 col-md-6 mb-4">
-                            <div class="card h-100">
-                                <a href="#!"><img class="card-img-top" src="https://firebasestorage.googleapis.com/v0/b/m152-bildergalerie.appspot.com/o/images%2FGin_Balthasar.jpeg?alt=media&token=398cea22-9398-4fc6-b9ae-601f9488af6f" alt="..." /></a>
-                                <div class="card-body">
-                                    <h4 class="card-title"><a href="#!">Balthasar</a></h4>
-                                    <h5>00 Fr.</h5>
-                                    <p class="card-text">---Text---<br/><b>Tonic: </b> --- <br/><b>Beilage: </b> ---</p>
-                                </div>
-                                <div class="card-footer"><small class="text-muted">★ ★ ★ ★ ☆</small></div>
-                            </div>
-                        </div>
-						<div class="col-lg-4 col-md-6 mb-4">
-                            <div class="card h-100">
-                                <a href="#!"><img class="card-img-top" src="https://firebasestorage.googleapis.com/v0/b/m152-bildergalerie.appspot.com/o/images%2FGin_Bankes.jpeg?alt=media&token=eb1adfaf-ca81-49fe-8343-3b08f5455153" alt="..." /></a>
-                                <div class="card-body">
-                                    <h4 class="card-title"><a href="#!">Bankes</a></h4>
-                                    <h5>00 Fr.</h5>
-                                    <p class="card-text">---Text---<br/><b>Tonic: </b> --- <br/><b>Beilage: </b> ---</p>
-                                </div>
-                                <div class="card-footer"><small class="text-muted">★ ★ ★ ★ ☆</small></div>
-                            </div>
-                        </div>
-						<div class="col-lg-4 col-md-6 mb-4">
-                            <div class="card h-100">
-                                <a href="#!"><img class="card-img-top" src="https://firebasestorage.googleapis.com/v0/b/m152-bildergalerie.appspot.com/o/images%2FGin_Bordiga.jpeg?alt=media&token=90af15fe-a1dc-4325-96a6-e8ed27c225b6" alt="..." /></a>
-                                <div class="card-body">
-                                    <h4 class="card-title"><a href="#!">Bordiga</a></h4>
-                                    <h5>00 Fr.</h5>
-                                    <p class="card-text">---Text---<br/><b>Tonic: </b> --- <br/><b>Beilage: </b> ---</p>
-                                </div>
-                                <div class="card-footer"><small class="text-muted">★ ★ ★ ★ ☆</small></div>
-                            </div>
-                        </div>
-						<div class="col-lg-4 col-md-6 mb-4">
-                            <div class="card h-100">
-                                <a href="#!"><img class="card-img-top" src="https://firebasestorage.googleapis.com/v0/b/m152-bildergalerie.appspot.com/o/images%2FGin_Fifty.jpeg?alt=media&token=98e32ae2-fac3-4341-88d8-1ec8a3079112" alt="..." /></a>
-                                <div class="card-body">
-                                    <h4 class="card-title"><a href="#!">Fifty</a></h4>
-                                    <h5>00 Fr.</h5>
-                                    <p class="card-text">---Text---<br/><b>Tonic: </b> --- <br/><b>Beilage: </b> ---</p>
-                                </div>
-                                <div class="card-footer"><small class="text-muted">★ ★ ★ ★ ☆</small></div>
-                            </div>
-                        </div>
-						<div class="col-lg-4 col-md-6 mb-4">
-                            <div class="card h-100">
-                                <a href="#!"><img class="card-img-top" src="https://firebasestorage.googleapis.com/v0/b/m152-bildergalerie.appspot.com/o/images%2FGin_Garden.jpeg?alt=media&token=169f0b8b-4742-4a49-9d51-8fa1b6b263f2" alt="..." /></a>
-                                <div class="card-body">
-                                    <h4 class="card-title"><a href="#!">Garden Swim</a></h4>
-                                    <h5>00 Fr.</h5>
-                                    <p class="card-text">---Text---<br/><b>Tonic: </b> --- <br/><b>Beilage: </b> ---</p>
-                                </div>
-                                <div class="card-footer"><small class="text-muted">★ ★ ★ ★ ☆</small></div>
-                            </div>
-                        </div>
-						<div class="col-lg-4 col-md-6 mb-4">
-                            <div class="card h-100">
-                                <a href="#!"><img class="card-img-top" src="https://firebasestorage.googleapis.com/v0/b/m152-bildergalerie.appspot.com/o/images%2FGin_Jinzu.jpeg?alt=media&token=ddcee662-95e9-4444-baea-bd649b6ecace" alt="..." /></a>
-                                <div class="card-body">
-                                    <h4 class="card-title"><a href="#!">Jinzu</a></h4>
-                                    <h5>39 Fr.</h5>
-                                    <p class="card-text">---Text---<br/><b>Tonic: Gelb</b> --- <br/><b>Beilage: Apfel</b> ---</p>
-                                </div>
-                                <div class="card-footer"><small class="text-muted">★ ★ ★ ★ ☆</small></div>
-                            </div>
-                        </div>
-						<div class="col-lg-4 col-md-6 mb-4">
-                            <div class="card h-100">
-                                <a href="#!"><img class="card-img-top" src="https://firebasestorage.googleapis.com/v0/b/m152-bildergalerie.appspot.com/o/images%2FGin_Mare.jpeg?alt=media&token=41579d85-f5ad-4935-ba6f-f8e127e443f4" alt="..." /></a>
-                                <div class="card-body">
-                                    <h4 class="card-title"><a href="#!">Gin Mare</a></h4>
-                                    <h5>00 Fr.</h5>
-                                    <p class="card-text">---Text---<br/><b>Tonic: </b> --- <br/><b>Beilage: </b> ---</p>
-                                </div>
-                                <div class="card-footer"><small class="text-muted">★ ★ ★ ★ ☆</small></div>
-                            </div>
-                        </div>
-						<div class="col-lg-4 col-md-6 mb-4">
-                            <div class="card h-100">
-                                <a href="#!"><img class="card-img-top" src="https://firebasestorage.googleapis.com/v0/b/m152-bildergalerie.appspot.com/o/images%2FGin_Monkey47.jpeg?alt=media&token=5e925123-a317-44ed-86d9-998480d83775" alt="..." /></a>
-                                <div class="card-body">
-                                    <h4 class="card-title"><a href="#!">Monkey 47</a></h4>
-                                    <h5>00 Fr.</h5>
-                                    <p class="card-text">---Text---<br/><b>Tonic: </b> --- <br/><b>Beilage: </b> ---</p>
-                                </div>
-                                <div class="card-footer"><small class="text-muted">★ ★ ★ ★ ☆</small></div>
-                            </div>
-                        </div>
-						<div class="col-lg-4 col-md-6 mb-4">
-                            <div class="card h-100">
-                                <a href="#!"><img class="card-img-top" src="https://firebasestorage.googleapis.com/v0/b/m152-bildergalerie.appspot.com/o/images%2FGin_Nordes.jpeg?alt=media&token=f475c6ab-ccb6-4442-a70c-b73cc4d88b09" alt="..." /></a>
-                                <div class="card-body">
-                                    <h4 class="card-title"><a href="#!">Nordes</a></h4>
-                                    <h5>00 Fr.</h5>
-                                    <p class="card-text">---Text---<br/><b>Tonic: </b> --- <br/><b>Beilage: </b> ---</p>
-                                </div>
-                                <div class="card-footer"><small class="text-muted">★ ★ ★ ★ ☆</small></div>
-                            </div>
-                        </div>
-						<div class="col-lg-4 col-md-6 mb-4">
-                            <div class="card h-100">
-                                <a href="#!"><img class="card-img-top" src="https://firebasestorage.googleapis.com/v0/b/m152-bildergalerie.appspot.com/o/images%2FGin_Roku.jpeg?alt=media&token=a82cc60b-17f1-4763-bb63-ac3ccd20314c" alt="..." /></a>
-                                <div class="card-body">
-                                    <h4 class="card-title"><a href="#!">Roku</a></h4>
-                                    <h5>00 Fr.</h5>
-                                    <p class="card-text">---Text---<br/><b>Tonic: </b> --- <br/><b>Beilage: </b> ---</p>
-                                </div>
-                                <div class="card-footer"><small class="text-muted">★ ★ ★ ★ ☆</small></div>
-                            </div>
-                        </div>
-						<div class="col-lg-4 col-md-6 mb-4">
-                            <div class="card h-100">
-                                <a href="#!"><img class="card-img-top" src="https://firebasestorage.googleapis.com/v0/b/m152-bildergalerie.appspot.com/o/images%2FGin_Siegfried.jpeg?alt=media&token=b0b0de2a-3699-4146-9c8b-9d711e02ee2b" alt="..." /></a>
-                                <div class="card-body">
-                                    <h4 class="card-title"><a href="#!">Siegfried</a></h4>
-                                    <h5>00 Fr.</h5>
-                                    <p class="card-text">---Text---<br/><b>Tonic: </b> --- <br/><b>Beilage: </b> ---</p>
-                                </div>
-                                <div class="card-footer"><small class="text-muted">★ ★ ★ ★ ☆</small></div>
-                            </div>
-                        </div>
-						
-						
-                    </div>
-                </div>
-            </div>
+<header>
+    <h1>My Cookbook</h1>
+    <nav>
+        <a href="#">Home</a>
+        <a href="#">Recipes</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+    </nav>
+</header>
+
+<div class="container">
+    <button class="upload-btn" onclick="toggleUploadForm()">Upload Recipe</button>
+    
+    <div class="upload-form" id="uploadForm">
+        <form onsubmit="saveRecipe(event)">
+            <input type="text" id="recipeTitle" placeholder="Title" required>
+            <textarea id="recipeDescription" placeholder="Description" required></textarea>
+            <input type="file" id="recipeImage" accept="image/*" required>
+            <button type="submit">Save</button>
+        </form>
+    </div>
+
+    <!-- Example recipes -->
+    <div class="recipe">
+        <img src="https://via.placeholder.com/300" alt="Spaghetti Carbonara">
+        <h2>Spaghetti Carbonara</h2>
+        <p>A classic Italian pasta dish.</p>
+        <div class="recipe-buttons">
+            <button class="edit-btn" onclick="editRecipe('Spaghetti_Carbonara')">Edit</button>
+            <button class="delete-btn" onclick="confirmDelete('Spaghetti_Carbonara')">Delete</button>
         </div>
-        <!-- Footer-->
-        <footer class="py-5 bg-dark">
-            <div class="container"><p class="m-0 text-center text-white">Copyright &copy; Cisco Molnár 2021</p></div>
-        </footer>
-        <!-- Bootstrap core JS-->
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Core theme JS-->
-        <script src="js/scripts.js"></script>
+    </div>
 
-    </body>
+    <div class="recipe">
+        <img src="https://via.placeholder.com/300" alt="Chocolate Chip Cookies">
+        <h2>Chocolate Chip Cookies</h2>
+        <p>Delicious homemade cookies with chocolate chips.</p>
+        <div class="recipe-buttons">
+            <button class="edit-btn" onclick="editRecipe('Chocolate_Chip_Cookies')">Edit</button>
+            <button class="delete-btn" onclick="confirmDelete('Chocolate_Chip_Cookies')">Delete</button>
+        </div>
+    </div>
+    <!-- End of example recipes -->
+
+</div>
+
+<script>
+    function toggleUploadForm() {
+        var uploadForm = document.getElementById("uploadForm");
+        if (uploadForm.style.display === "none") {
+            uploadForm.style.display = "block";
+        } else {
+            uploadForm.style.display = "none";
+        }
+    }
+
+    function saveRecipe(event) {
+        event.preventDefault();
+        var title = document.getElementById("recipeTitle").value;
+        var description = document.getElementById("recipeDescription").value;
+        var image = document.getElementById("recipeImage").files[0];
+
+        if (title && description && image) {
+            // Create a new recipe element
+            var newRecipe = document.createElement("div");
+            newRecipe.classList.add("recipe");
+            // Create an image element
+            var img = document.createElement("img");
+            img.src = URL.createObjectURL(image);
+            img.alt = title;
+            newRecipe.appendChild(img);
+            // Create h2 element for title
+            var h2 = document.createElement("h2");
+            h2.textContent = title;
+            newRecipe.appendChild(h2);
+            // Create p element for description
+            var p = document.createElement("p");
+            p.textContent = description;
+            newRecipe.appendChild(p);
+            // Create div for buttons
+            var buttonDiv = document.createElement("div");
+            buttonDiv.classList.add("recipe-buttons");
+            // Create edit button
+            var editBtn = document.createElement("button");
+            editBtn.textContent = "Edit";
+            editBtn.classList.add("edit-btn");
+            editBtn.onclick = function() {
+                editRecipe(newRecipe);
+            };
+            buttonDiv.appendChild(editBtn);
+            // Create delete button
+            var deleteBtn = document.createElement("button");
+            deleteBtn.textContent = "Delete";
+            deleteBtn.classList.add("delete-btn");
+            deleteBtn.onclick = function() {
+                confirmDelete(newRecipe);
+            };
+            buttonDiv.appendChild(deleteBtn);
+            // Append button div to recipe
+            newRecipe.appendChild(buttonDiv);
+            // Append recipe to container
+            document.querySelector(".container").appendChild(newRecipe);
+            // Hide upload form
+            document.getElementById("uploadForm").style.display = "none";
+        } else {
+            alert("Please fill out all fields.");
+        }
+    }
+
+    function editRecipe(recipeElement) {
+        var title = recipeElement.querySelector("h2").textContent;
+        var description = recipeElement.querySelector("p").textContent;
+        var imageSrc = recipeElement.querySelector("img").src;
+        
+        document.getElementById("recipeTitle").value = title;
+        document.getElementById("recipeDescription").value = description;
+        // You can also set the image preview if needed
+        // document.getElementById("recipeImagePreview").src = imageSrc;
+
+        // Show upload form and hide save button
+        var uploadForm = document.getElementById("uploadForm");
+        var saveButton = uploadForm.querySelector("button[type=submit]");
+        uploadForm.style.display = "block";
+        saveButton.textContent = "Update";
+    }
+
+    function confirmDelete(recipeElement) {
+        var confirmDelete = confirm("Are you sure you want to delete this recipe?");
+        if (confirmDelete) {
+            recipeElement.remove();
+        }
+    }
+</script>
+
+</body>
 </html>
