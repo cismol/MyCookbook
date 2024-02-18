@@ -211,24 +211,30 @@
     // Authentication token (replace 'your_token' with your actual GitHub token)
     const authToken = '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';
 
-    // Load recipes from GitHub
-    function loadRecipesFromGitHub() {
-        fetch(githubApiUrl, {
-            headers: {
-                Authorization: `Bearer ${authToken}`
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Parse the base64-encoded content
-            const recipesContent = decodeURIComponent(escape(atob(data.content)));
-            const recipes = JSON.parse(recipesContent);
-            displayRecipes(recipes);
-        })
-        .catch(error => {
-            console.error('Error loading recipes from GitHub:', error);
-        });
-    }
+// Load recipes from GitHub
+function loadRecipesFromGitHub() {
+    fetch(githubApiUrl, {
+        headers: {
+            Authorization: `Bearer ${authToken}`
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to fetch recipes from GitHub');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Parse the recipes data directly as JSON
+        const recipes = JSON.parse(data.content);
+        displayRecipes(recipes);
+    })
+    .catch(error => {
+        console.error('Error loading recipes from GitHub:', error);
+    });
+}
+
+
 
     // Save recipe to GitHub and display it
     function saveRecipe(event) {
@@ -446,3 +452,4 @@ function toggleUploadForm() {
 
 </body>
 </html>
+	
