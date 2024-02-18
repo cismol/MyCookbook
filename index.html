@@ -209,7 +209,7 @@
     const githubApiUrl = 'https://api.github.com/repos/cismol/MyCookbook/contents/recipes/test1.json';
 
     // Authentication token (replace 'your_token' with your actual GitHub token)
-    const authToken = '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';
+    const authToken = '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';
 
 // Load recipes from GitHub
 function loadRecipesFromGitHub() {
@@ -225,7 +225,7 @@ function loadRecipesFromGitHub() {
         return response.json();
     })
     .then(data => {
-        // Parse the recipes data directly as JSON
+        // Parse the content directly as JSON
         const recipes = JSON.parse(data.content);
         displayRecipes(recipes);
     })
@@ -233,7 +233,6 @@ function loadRecipesFromGitHub() {
         console.error('Error loading recipes from GitHub:', error);
     });
 }
-
 
 
     // Save recipe to GitHub and display it
@@ -452,4 +451,3 @@ function toggleUploadForm() {
 
 </body>
 </html>
-	
