@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Head content remains unchanged -->
+</head>
+<body>
+
+<header>
+    <!-- Header content remains unchanged -->
+</header>
+
+<div class="container">
+    <!-- Container content remains unchanged -->
+</div>
+
+<!-- The Modal -->
+<!-- Modal content remains unchanged -->
+
+<script>
+    // Function to save recipe to GitHub repository
+    function saveRecipe(event) {
+        event.preventDefault();
+        var title = document.getElementById("recipeTitle").value;
+        var description = document.getElementById("recipeDescription").value;
+        var image = document.getElementById("recipeImage").files[0];
+
+        if (title && description && image) {
+            var recipeData = {
+                title: title,
+                description: description,
+                // You can add more fields as needed
+            };
+
+            // Convert recipeData to JSON string
+            var jsonData = JSON.stringify(recipeData);
+
+            // AJAX request to push JSON data to GitHub repository
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        console.log("Recipe saved successfully");
+                        // Refresh recipes after adding new recipe
+                        loadRecipes();
+                    } else {
+                        console.error("Error saving recipe:", xhr.responseText);
+                    }
+                }
+            };
+            xhr.open("PUT", "https://api.github.com/repos/cismol/MyCookbook/contents/recipes/" + title.replace(/ /g, "_") + ".json");
+            xhr.setRequestHeader("Authorization", "Bearer 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");
+            xhr.send(JSON.stringify({
+                message: "Add " + title + " recipe",
+                content: btoa(jsonData) // Encode JSON data as base64
+            }));
+        } else {
+            alert("Please fill out all fields.");
+        }
+    }
+
+    // Function to load recipes from GitHub repository
+    function loadRecipes() {
+        var container = document.getElementById("exampleRecipes");
+        container.innerHTML = ""; // Clear previous recipes
+
+        // AJAX request to fetch recipe files from GitHub repository
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    var recipeFiles = JSON.parse(xhr.responseText);
+                    recipeFiles.forEach(function(recipeFile) {
+                        var recipeUrl = recipeFile.download_url;
+                        // AJAX request to fetch recipe data from the recipe URL
+                        var xhr2 = new XMLHttpRequest();
+                        xhr2.onreadystatechange = function() {
+                            if (xhr2.readyState === XMLHttpRequest.DONE) {
+                                if (xhr2.status === 200) {
+                                    var recipeData = JSON.parse(xhr2.responseText);
+                                    // Render recipe using recipeData
+                                    var newRecipe = document.createElement("div");
+                                    newRecipe.classList.add("recipe");
+                                    newRecipe.innerHTML = `
+                                        <h2>${recipeData.title}</h2>
+                                        <p>${recipeData.description}</p>
+                                        <!-- Add more fields as needed -->
+                                    `;
+                                    container.appendChild(newRecipe);
+                                } else {
+                                    console.error("Error fetching recipe data:", xhr2.responseText);
+                                }
+                            }
+                        };
+                        xhr2.open("GET", recipeUrl);
+                        xhr2.send();
+                    });
+                } else {
+                    console.error("Error fetching recipe files:", xhr.responseText);
+                }
+            }
+        };
+        xhr.open("GET", "https://api.github.com/repos/cismol/MyCookbook/contents/recipes/");
+        xhr.send();
+    }
+
+    // Load recipes when the page loads
+    window.onload = function() {
+        loadRecipes();
+    };
+</script>
+
+</body>
+</html>
