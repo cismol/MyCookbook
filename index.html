@@ -206,38 +206,31 @@
 
 <script>
     // GitHub API URL for the raw content of the recipes file
-	const githubApiUrl = 'https://api.github.com/repos/cismol/MyCookbook/contents/recipes/test1.json';
-
+	//const githubApiUrl = 'https://api.github.com/repos/cismol/MyCookbook/contents/recipes/test1.json';
 
     // Authentication token (replace 'your_token' with your actual GitHub token)
     const authToken = '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';
 
-// Load recipes from GitHub
-function loadRecipesFromGitHub() {
-    fetch(githubApiUrl, {
-        headers: {
-            Authorization: `Bearer ${authToken}`
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to fetch recipes from GitHub');
-        }
-        return response.json();
-    })
-    .then(data => {
-        // Extract the content from the response data
-        const content = data.content;
-        // Parse the content directly as JSON
-        const recipes = JSON.parse(decodeURIComponent(escape(atob(content))));
-        displayRecipes(recipes);
-    })
-    .catch(error => {
-        console.error('Error loading recipes from GitHub:', error);
-    });
-}
+    // GitHub raw content URL for the recipes file
+    const githubRawUrl = 'https://raw.githubusercontent.com/cismol/MyCookbook/master/recipes/test1.json';
 
-
+    // Load recipes from GitHub
+    function loadRecipesFromGitHub() {
+        fetch(githubRawUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch recipes from GitHub');
+            }
+            return response.text(); // Read response as text
+        })
+        .then(data => {
+            const recipes = JSON.parse(data); // Parse the content as JSON
+            displayRecipes(recipes);
+        })
+        .catch(error => {
+            console.error('Error loading recipes from GitHub:', error);
+        });
+    }
 
     // Save recipe to GitHub and display it
     function saveRecipe(event) {
