@@ -3,173 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Cookbook</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f8f8f8;
-        }
-        header {
-            background-color: #333;
-            color: #fff;
-            padding: 10px 0;
-            text-align: center;
-        }
-        nav {
-            display: flex;
-            justify-content: center;
-        }
-        nav a {
-            color: #fff;
-            text-decoration: none;
-            padding: 10px 20px;
-        }
-        nav a:hover {
-            background-color: #555;
-        }
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .recipe {
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .recipe img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-        .recipe h2 {
-            margin-bottom: 10px;
-        }
-        .recipe p {
-            margin-bottom: 10px;
-        }
-        .recipe-buttons {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .edit-btn, .delete-btn {
-            padding: 8px 16px;
-            background-color: #333;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .edit-btn:hover, .delete-btn:hover {
-            background-color: #555;
-        }
-        .upload-btn {
-            margin-bottom: 20px;
-            padding: 10px 20px;
-            background-color: #333;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .upload-btn:hover {
-            background-color: #555;
-        }
-        .upload-form {
-            display: none;
-        }
-        .upload-form input[type=text], .upload-form textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-        }
-        .upload-form input[type=file] {
-            margin-bottom: 10px;
-        }
-        .upload-form button {
-            padding: 10px 20px;
-            background-color: #333;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        .upload-form button:hover {
-            background-color: #555;
-        }
-
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 10% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            border-radius: 8px;
-            width: 80%;
-        }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .search-bar {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .search-input {
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-        }
-        .search-btn {
-            padding: 10px 20px;
-            background-color: #333;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .search-btn:hover {
-            background-color: #555;
-        }
-    </style>
+    <title>Simple Recipe Book</title>
+    <link rel="stylesheet" type="text/css" href="style/style.css">
 </head>
 <body>
-
 <header>
     <h1>My Cookbook</h1>
     <div class="search-bar">
         <input type="text" id="searchInput" class="search-input" placeholder="Search recipes...">
-        <button onclick="searchRecipes()" class="search-btn">Search</button>
+        <button id="searchButton">Search</button>
     </div>
     <nav>
         <a href="#">Home</a>
@@ -179,273 +21,134 @@
     </nav>
 </header>
 
+<div class="edit-form" id="editForm" style="display: none;">
+    <h2>Edit Recipe</h2>
+    <input type="text" id="editRecipeTitle" placeholder="Title">
+    <textarea id="editRecipeDescription" placeholder="Description"></textarea>
+    <button id="saveEditButton">Save Changes</button>
+</div>
 
-<div class="container">
-    <button class="upload-btn" onclick="toggleUploadForm()">Upload Recipe</button>
+<div id="recipeList"></div>
+
+<div class="upload-form">
+    <h2>Add New Recipe</h2>
+    <input type="text" id="newRecipeTitle" placeholder="Title">
+    <textarea id="newRecipeDescription" placeholder="Description"></textarea>
+    <button id="uploadRecipeButton">Upload Recipe</button>
+</div>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, addDoc, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
     
-    <div class="upload-form" id="uploadForm" style="display: none;">
-        <form onsubmit="saveRecipe(event)">
-            <input type="text" id="recipeTitle" placeholder="Title" required>
-            <textarea id="recipeDescription" placeholder="Description" required></textarea>
-            <input type="file" id="recipeImage" accept="image/*" required>
-            <button type="submit">Save</button>
-        </form>
-    </div>
-
-    <!-- Example recipes -->
-    <div id="exampleRecipes"></div>
-    <!-- End of example recipes -->
-
-</div>
-
-<!-- The Modal -->
-<div id="editModal" class="modal">
-  <!-- Modal content -->
-    <!-- Modal content unchanged from the original code -->
-</div>
-
-<script>
-    // GitHub API URL for the raw content of the recipes file
-	//const githubApiUrl = 'https://api.github.com/repos/cismol/MyCookbook/contents/recipes/test1.json';
-
-    // Authentication token (replace 'your_token' with your actual GitHub token)
-    const authToken = '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';
-
-    // GitHub raw content URL for the recipes file
-    const githubRawUrl = 'https://raw.githubusercontent.com/cismol/MyCookbook/master/recipes/test1.json';
-
-    // Load recipes from GitHub
-    function loadRecipesFromGitHub() {
-        fetch(githubRawUrl)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to fetch recipes from GitHub');
-            }
-            return response.text(); // Read response as text
-        })
-        .then(data => {
-            const recipes = JSON.parse(data); // Parse the content as JSON
-            displayRecipes(recipes);
-        })
-        .catch(error => {
-            console.error('Error loading recipes from GitHub:', error);
-        });
-    }
-
-    // Save recipe to GitHub and display it
-    function saveRecipe(event) {
-        event.preventDefault();
-        const title = document.getElementById("recipeTitle").value;
-        const description = document.getElementById("recipeDescription").value;
-        const image = document.getElementById("recipeImage").files[0];
-
-        if (title && description && image) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const imageSrc = event.target.result;
-                const recipe = {
-                    title: title,
-                    description: description,
-                    image: imageSrc
-                };
-                addRecipeToGitHub(recipe); // Add the new recipe to GitHub
-            };
-            reader.readAsDataURL(image);
-        } else {
-            alert("Please fill out all fields.");
-        }
-    }
-
-    // Add recipe to GitHub
-    function addRecipeToGitHub(recipe) {
-        fetch(githubApiUrl, {
-            headers: {
-                Authorization: `Bearer ${authToken}`
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            const currentSha = data.sha;
-            const recipesContent = decodeURIComponent(escape(atob(data.content)));
-            const recipes = JSON.parse(recipesContent);
-            recipes.push(recipe); // Add the new recipe to the existing recipes
-            const recipesJson = JSON.stringify(recipes);
-            const recipesContentBase64 = btoa(recipesJson); // Convert to base64
-
-            // Prepare the request body
-            const requestBody = {
-                message: 'Add new recipe',
-                content: recipesContentBase64,
-                sha: currentSha
-            };
-
-            // Update the file content on GitHub
-            fetch(githubApiUrl, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${authToken}`
-                },
-                body: JSON.stringify(requestBody)
-            })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Recipe added to GitHub successfully.');
-                    loadRecipesFromGitHub(); // Reload recipes after adding the new one
-                } else {
-                    console.error('Error adding recipe to GitHub:', response.statusText);
-                }
-            })
-            .catch(error => {
-                console.error('Error adding recipe to GitHub:', error);
-            });
-        })
-        .catch(error => {
-            console.error('Error fetching current file data from GitHub:', error);
-        });
-    }
-
-    // Display recipes on the page
-    function displayRecipes(recipes) {
-        const container = document.getElementById("exampleRecipes");
-        container.innerHTML = ''; // Clear previous recipes
-
-        recipes.forEach(recipe => {
-            const newRecipe = document.createElement("div");
-            newRecipe.classList.add("recipe");
-            newRecipe.innerHTML = `
-                <img src="${recipe.image}" alt="${recipe.title}">
-                <h2>${recipe.title}</h2>
-                <p>${recipe.description}</p>
-                <div class="recipe-buttons">
-                    <button class="edit-btn" onclick="editRecipe(this.parentElement.parentElement)">Edit</button>
-                    <button class="delete-btn" onclick="confirmDelete(this.parentElement.parentElement)">Delete</button>
-                </div>
-            `;
-            container.appendChild(newRecipe);
-        });
-    }
-
-    // Load recipes from GitHub when the page loads
-    window.onload = function() {
-        loadRecipesFromGitHub();
+    const firebaseConfig = {
+        apiKey: "AIzaSyDxvabrO3eNRTm37fE7G7sxckZBJrrnpHQ",
+        authDomain: "mycookbook-ee7d2.firebaseapp.com",
+        projectId: "mycookbook-ee7d2",
+        storageBucket: "mycookbook-ee7d2.appspot.com",
+        messagingSenderId: "49507480622",
+        appId: "1:49507480622:web:679369b3d9568dc15adbbf",
+        measurementId: "G-1MXN7NP98K"
     };
 
-// Function to toggle the upload form visibility and reset field values
-function toggleUploadForm() {
-    const uploadForm = document.getElementById("uploadForm");
-    const titleInput = document.getElementById("recipeTitle");
-    const descriptionInput = document.getElementById("recipeDescription");
-    const imageInput = document.getElementById("recipeImage");
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-    if (uploadForm.style.display === "none") {
-        // Show the upload form
-        uploadForm.style.display = "block";
-    } else {
-        // Hide the upload form and reset field values
-        uploadForm.style.display = "none";
-        titleInput.value = ""; // Reset title field
-        descriptionInput.value = ""; // Reset description field
-        imageInput.value = ""; // Reset image field
-    }
-}
+    document.getElementById('uploadRecipeButton').addEventListener('click', addRecipe);
+	document.getElementById('searchButton').addEventListener('click', () => fetchRecipes(document.getElementById('searchInput').value.trim()));
 
 
-    // Function to edit a recipe
-    function editRecipe(recipeElement) {
-        const title = recipeElement.querySelector("h2").textContent;
-        const description = recipeElement.querySelector("p").textContent;
-        const imageSrc = recipeElement.querySelector("img").src;
-
-        // Populate the edit form fields with the current recipe details
-        document.getElementById("editTitle").value = title;
-        document.getElementById("editDescription").value = description;
-
-        // Display the edit modal
-        document.getElementById("editModal").style.display = "block";
-    }
-
-    // Function to confirm and delete a recipe
-    function confirmDelete(recipeElement) {
-        const confirmDelete = confirm("Are you sure you want to delete this recipe?");
-        if (confirmDelete) {
-            recipeElement.remove();
-            const title = recipeElement.querySelector("h2").textContent;
-            deleteRecipeFromGitHub(title); // Delete the recipe from GitHub
+    async function addRecipe() {
+        const title = document.getElementById('newRecipeTitle').value.trim();
+        const description = document.getElementById('newRecipeDescription').value.trim();
+        if (title && description) {
+            try {
+                await addDoc(collection(db, "recipes"), { title, description });
+                fetchRecipes();
+                document.getElementById('newRecipeTitle').value = '';
+                document.getElementById('newRecipeDescription').value = '';
+                alert('Recipe added successfully!');
+            } catch (error) {
+                console.error("Error adding recipe: ", error);
+                alert('Failed to add recipe.');
+            }
+        } else {
+            alert('Title and description are required.');
         }
     }
 
-    // Function to delete a recipe from GitHub
-    function deleteRecipeFromGitHub(title) {
-        fetch(githubApiUrl, {
-            headers: {
-                Authorization: `Bearer ${authToken}`
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            const currentSha = data.sha;
-            const recipesContent = decodeURIComponent(escape(atob(data.content)));
-            const recipes = JSON.parse(recipesContent);
-            const index = recipes.findIndex(recipe => recipe.title === title);
-            if (index !== -1) {
-                recipes.splice(index, 1); // Remove the recipe from the recipes array
-                const recipesJson = JSON.stringify(recipes);
-                const recipesContentBase64 = btoa(recipesJson); // Convert to base64
+    document.getElementById('saveEditButton').addEventListener('click', async function() {
+        const docId = this.getAttribute('data-id');
+        const updatedTitle = document.getElementById('editRecipeTitle').value.trim();
+        const updatedDescription = document.getElementById('editRecipeDescription').value.trim();
 
-                // Prepare the request body
-                const requestBody = {
-                    message: 'Delete recipe',
-                    content: recipesContentBase64,
-                    sha: currentSha
-                };
+        if (!updatedTitle || !updatedDescription) {
+            alert('Both title and description must be filled out.');
+            return;
+        }
 
-                // Update the file content on GitHub
-                fetch(githubApiUrl, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${authToken}`
-                    },
-                    body: JSON.stringify(requestBody)
-                })
-                .then(response => {
-                    if (response.ok) {
-                        console.log('Recipe deleted from GitHub successfully.');
-                        loadRecipesFromGitHub(); // Reload recipes after deleting the recipe
-                    } else {
-                        console.error('Error deleting recipe from GitHub:', response.statusText);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error deleting recipe from GitHub:', error);
-                });
-            } else {
-                console.error('Recipe not found:', title);
+        const docRef = doc(db, "recipes", docId);
+        try {
+            await updateDoc(docRef, {
+                title: updatedTitle,
+                description: updatedDescription
+            });
+            document.getElementById('editForm').style.display = 'none';
+            fetchRecipes();
+            alert('Recipe updated successfully!');
+        } catch (error) {
+            console.error("Error updating recipe: ", error);
+            alert('Failed to update recipe.');
+        }
+    });
+
+    async function fetchRecipes(searchTerm = "") {
+        const recipesCollectionRef = collection(db, 'recipes');
+        const snapshot = await getDocs(recipesCollectionRef);
+        const recipesContainer = document.getElementById('recipeList');
+        recipesContainer.innerHTML = '';
+        
+        snapshot.forEach(doc => {
+            const recipe = doc.data();
+            if (!searchTerm || recipe.title.toLowerCase().includes(searchTerm.toLowerCase())) {
+                const recipeElement = document.createElement('div');
+                recipeElement.classList.add('recipe');
+                recipeElement.innerHTML = `
+                    <h2>${recipe.title}</h2>
+                    <p>${recipe.description}</p>
+                    <button class="editButton" data-id="${doc.id}">Edit</button>
+                `;
+                recipesContainer.appendChild(recipeElement);
             }
-        })
-        .catch(error => {
-            console.error('Error fetching current file data from GitHub:', error);
         });
+
+        document.querySelectorAll('.editButton').forEach(button => {
+            button.addEventListener('click', function() {
+                showEditForm(this.getAttribute('data-id'));
+            });
+        });
+    }
+
+    async function showEditForm(docId) {
+        const docRef = doc(db, "recipes", docId);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            const recipeData = docSnap.data();
+            document.getElementById('editRecipeTitle').value = recipeData.title;
+            document.getElementById('editRecipeDescription').value = recipeData.description;
+            
+            const editForm = document.getElementById('editForm');
+            editForm.style.display = 'block';
+            document.getElementById('saveEditButton').setAttribute('data-id', docId); // Pass the document ID to the save button
+        } else {
+            console.log("No such document!");
+        }
     }
 	
-	    // Function to search recipes
-    function searchRecipes() {
-        const searchInput = document.getElementById("searchInput").value.toLowerCase();
-        const recipes = document.querySelectorAll(".recipe");
+	
 
-        recipes.forEach(recipe => {
-            const title = recipe.querySelector("h2").textContent.toLowerCase();
-            const description = recipe.querySelector("p").textContent.toLowerCase();
-            if (title.includes(searchInput) || description.includes(searchInput)) {
-                recipe.style.display = "block";
-            } else {
-                recipe.style.display = "none";
-            }
-        });
-    }
+    fetchRecipes();
 </script>
 
 </body>
 </html>
-

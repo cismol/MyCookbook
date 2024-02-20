@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Recipe Book</title>
+    <link rel="stylesheet" type="text/css" href="style/style.css">
+
+</head>
+<body>
+
+<div class="upload-form">
+    <h2>Add New Recipe</h2>
+    <input type="text" id="newRecipeTitle" placeholder="Title">
+    <textarea id="newRecipeDescription" placeholder="Description"></textarea>
+	<button id="uploadRecipeButton">Upload Recipe</button>
+</div>
+
+<div id="recipeList"></div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    
+    const firebaseConfig = {
+        apiKey: "AIzaSyDxvabrO3eNRTm37fE7G7sxckZBJrrnpHQ",
+        authDomain: "mycookbook-ee7d2.firebaseapp.com",
+        projectId: "mycookbook-ee7d2",
+        storageBucket: "mycookbook-ee7d2.appspot.com",
+        messagingSenderId: "49507480622",
+        appId: "1:49507480622:web:679369b3d9568dc15adbbf",
+        measurementId: "G-1MXN7NP98K"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+
+
+
+
+
+
+
+    async function addRecipe() {
+        const title = document.getElementById('newRecipeTitle').value.trim();
+        const description = document.getElementById('newRecipeDescription').value.trim();
+        if (title && description) {
+            try {
+                await addDoc(collection(db, "recipes"), { title, description });
+                fetchRecipes(); // Refresh the list after adding
+                // Clear the input fields
+                document.getElementById('newRecipeTitle').value = '';
+                document.getElementById('newRecipeDescription').value = '';
+                alert('Recipe added successfully!');
+            } catch (error) {
+                console.error("Error adding recipe: ", error);
+                alert('Failed to add recipe.');
+            }
+        } else {
+            alert('Title and description are required.');
+        }
+    }
+	
+	document.addEventListener('DOMContentLoaded', () => {
+		document.getElementById('uploadRecipeButton').addEventListener('click', addRecipe);
+	});
+	
+	
+	
+
+
+    async function fetchRecipes() {
+        const recipesCollectionRef = collection(db, 'recipes');
+        const snapshot = await getDocs(recipesCollectionRef);
+        const recipesContainer = document.getElementById('recipeList');
+        recipesContainer.innerHTML = '';
+        
+        snapshot.forEach(doc => {
+            const recipe = doc.data();
+            const recipeElement = document.createElement('div');
+            recipeElement.classList.add('recipe');
+            recipeElement.innerHTML = `
+                <h2>${recipe.title}</h2>
+                <p>${recipe.description}</p>
+            `;
+            recipesContainer.appendChild(recipeElement);
+        });
+    }
+
+    fetchRecipes();
+</script>
+
+</body>
+</html>
