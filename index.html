@@ -73,6 +73,130 @@
     document.getElementById('searchButton').addEventListener('click', () => fetchRecipes(document.getElementById('searchInput').value.trim()));
 
 
+    async function showEditForm(docId) {
+        const docRef = doc(db, "recipes", docId);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            const recipeData = docSnap.data();
+            document.getElementById('editRecipeTitle').value = recipeData.title;
+            document.getElementById('editRecipeDescription').value = recipeData.description;
+            
+            // Clear existing ingredient inputs except the template
+            document.querySelectorAll('.ingredient:not(#ingredientTemplate)').forEach(el => el.remove());
+
+            // Populate the form with existing ingredients
+            recipeData.ingredients.forEach((ingredient, index) => {
+                addIngredientField(ingredient); // Pass ingredient data to populate fields
+            });
+
+            // Show the form
+            const editForm = document.getElementById('editForm');
+            editForm.style.display = 'block';
+            document.getElementById('saveEditButton').setAttribute('data-id', docId);
+
+            // Ensure at least one ingredient field is available
+            if (recipeData.ingredients.length === 0) {
+                addIngredientField(); // Add an empty ingredient field if none exist
+            }
+        } else {
+            console.log("No such document!");
+        }
+    }
+
+
+	
+	document.getElementById('addIngredientButton').addEventListener('click', addIngredientField);
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.classList.contains('removeIngredient') && ingredientsNodes.length > 0) {
+        e.target.parentNode.remove();
+        } else {
+            alert('You must have at least one ingredient.');
+			addIngredientField();
+        }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize the first ingredient field on page load
+    addIngredientField();
+    document.getElementById('addIngredientButton').addEventListener('click', addIngredientField);
+    document.getElementById('uploadRecipeButton').addEventListener('click', addRecipe);
+    // Additional initialization code as needed
+});
+
+function addIngredientField() {
+    const ingredientsList = document.getElementById('ingredientsList');
+    const newIngredient = document.getElementById('ingredientTemplate').cloneNode(true);
+    newIngredient.style.display = 'flex'; // Make it visible
+    // Ensure the cloned node is not the template anymore
+    newIngredient.classList.remove('ingredient-template');
+    newIngredient.id = '';
+    ingredientsList.appendChild(newIngredient);
+}
+
+async function addRecipe() {
+    const title = document.getElementById('newRecipeTitle').value.trim();
+    const description = document.getElementById('newRecipeDescription').value.trim();
+    // Exclude the template from the query selector
+    const ingredientsNodes = document.querySelectorAll('.ingredient:not(.ingredient-template)');
+    const ingredients = Array.from(ingredientsNodes).map(node => ({
+        menge: node.querySelector('.ingredient-quantity').value,
+        zutat: node.querySelector('.ingredient-name').value
+    })).filter(ingredient => ingredient.menge && ingredient.zutat);
+
+    if (title && description && ingredients.length > 0) {
+        try {
+            await addDoc(collection(db, "recipes"), { title, description, ingredients });
+            alert('Recipe added successfully!');
+            // Reset form and ingredients list after successful addition
+            document.getElementById('newRecipeTitle').value = '';
+            document.getElementById('newRecipeDescription').value = '';
+            resetIngredientsList(); // Reset the ingredients list
+        } catch (error) {
+            console.error("Error adding recipe: ", error);
+            alert('Failed to add recipe.');
+        }
+    } else {
+        alert('Title, description, and at least one ingredient are required.');
+    }
+	// Reload the current page
+	location.reload();
+
+}
+
+function resetIngredientsList() {
+    // Clear existing ingredients
+    document.querySelectorAll('.ingredient:not(#ingredientTemplate)').forEach(el => el.remove());
+    // Add a new ingredient field for the next recipe
+    addIngredientField();
+}
+
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.classList.contains('removeIngredient')) {
+        // Get all the ingredient nodes excluding the template
+        const ingredientsNodes = document.querySelectorAll('.ingredient:not(#ingredientTemplate)');
+        
+        // Only allow removal if there are more than one ingredient elements
+        if (ingredientsNodes.length > 0) {
+            e.target.parentNode.remove();
+        } else {
+            alert('You must have at least one ingredient.');
+			addIngredientField();
+        }
+    }
+});
+
+
+
+  async function deleteRecipe(docId) {
+        if (confirm('Are you sure you want to delete this recipe?')) {
+            await deleteDoc(doc(db, "recipes", docId));
+            alert('Recipe deleted successfully.');
+            fetchRecipes(); // Refresh the list after deletion
+        }
+    }
+
+
 async function fetchRecipes(searchTerm = "") {
     const recipesCollectionRef = collection(db, 'recipes');
     const snapshot = await getDocs(recipesCollectionRef);
@@ -117,95 +241,6 @@ async function fetchRecipes(searchTerm = "") {
         });
     });
 }
-
-
-
-
-
-    async function showEditForm(docId) {
-        const docRef = doc(db, "recipes", docId);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-            const recipeData = docSnap.data();
-            document.getElementById('editRecipeTitle').value = recipeData.title;
-            document.getElementById('editRecipeDescription').value = recipeData.description;
-            
-            // Clear existing ingredient inputs except the template
-            document.querySelectorAll('.ingredient:not(#ingredientTemplate)').forEach(el => el.remove());
-
-            // Populate the form with existing ingredients
-            recipeData.ingredients.forEach((ingredient, index) => {
-                addIngredientField(ingredient); // Pass ingredient data to populate fields
-            });
-
-            // Show the form
-            const editForm = document.getElementById('editForm');
-            editForm.style.display = 'block';
-            document.getElementById('saveEditButton').setAttribute('data-id', docId);
-
-            // Ensure at least one ingredient field is available
-            if (recipeData.ingredients.length === 0) {
-                addIngredientField(); // Add an empty ingredient field if none exist
-            }
-        } else {
-            console.log("No such document!");
-        }
-    }
-
-
-	
-	document.getElementById('addIngredientButton').addEventListener('click', addIngredientField);
-document.addEventListener('click', function(e) {
-    if (e.target && e.target.classList.contains('removeIngredient')) {
-        e.target.parentNode.remove();
-    }
-});
-
-function addIngredientField() {
-    const ingredientsList = document.getElementById('ingredientsList');
-    const newIngredient = document.getElementById('ingredientTemplate').cloneNode(true);
-    newIngredient.id = ''; // Remove the id to avoid duplicates
-    newIngredient.style.display = 'flex'; // Make it visible
-    ingredientsList.appendChild(newIngredient);
-}
-
-async function addRecipe() {
-    const title = document.getElementById('newRecipeTitle').value.trim();
-    const description = document.getElementById('newRecipeDescription').value.trim();
-    const ingredientsNodes = document.querySelectorAll('.ingredient:not(#ingredientTemplate)');
-    const ingredients = Array.from(ingredientsNodes).map(node => ({
-        menge: node.querySelector('.ingredient-quantity').value,
-        zutat: node.querySelector('.ingredient-name').value
-    })).filter(ingredient => ingredient.menge && ingredient.zutat);
-
-    // Check for title, description, and at least one ingredient
-    if (title && description && ingredients.length > 0) {
-        try {
-            await addDoc(collection(db, "recipes"), { title, description, ingredients });
-            // Refresh the list, clear the form, and alert success as before
-            fetchRecipes();
-            document.getElementById('newRecipeTitle').value = '';
-            document.getElementById('newRecipeDescription').value = '';
-            ingredientsNodes.forEach(node => node.remove()); // Remove all ingredient inputs except the template
-            addIngredientField(); // Add a fresh ingredient input
-            alert('Recipe added successfully!');
-        } catch (error) {
-            console.error("Error adding recipe: ", error);
-            alert('Failed to add recipe.');
-        }
-    } else {
-        alert('Title, description, and at least one ingredient are required.');
-    }
-}
-
-  async function deleteRecipe(docId) {
-        if (confirm('Are you sure you want to delete this recipe?')) {
-            await deleteDoc(doc(db, "recipes", docId));
-            alert('Recipe deleted successfully.');
-            fetchRecipes(); // Refresh the list after deletion
-        }
-    }
 
 
     fetchRecipes();
