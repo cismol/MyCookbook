@@ -24,10 +24,10 @@
 <div id="recipeList"></div>
 
 <div class="upload-form">
-    <h2>Add New Recipe</h2>
+    <h2>Neues Rezept hinzufügen</h2>
     <input type="text" id="newRecipeTitle" placeholder="Title">
+    <input type="file" id="newRecipeImage" accept="image/*" placeholder="Image" style="display:block; visibility: visible;">
     <textarea id="newRecipeDescription" placeholder="Description"></textarea>
-    <input type="file" id="newRecipeImage" accept="image/*">
     <div id="ingredientsList">
         <h3>Ingredients</h3>
         <div class="ingredient" id="ingredientTemplate" style="display: none;">
@@ -37,6 +37,15 @@
         </div>
     </div>
     <button type="button" id="addIngredientButton">Add Ingredient</button>
+	    <!-- Bewertung Dropdown -->
+    <select id="newRecipeRating">
+        <option value="">Bewertung auswählen</option>
+        <option value="1 - schlecht">1 - schlecht</option>
+        <option value="2 - ok">2 - ok</option>
+        <option value="3 - gut">3 - gut</option>
+        <option value="4 - sehr gut">4 - sehr gut</option>
+        <option value="5 - excelent">5 - excelent</option>
+    </select>
     <button id="uploadRecipeButton">Upload Recipe</button>
 </div>
 
@@ -88,7 +97,7 @@ async function fetchRecipes(searchTerm = "") {
             const recipeElement = document.createElement('div');
             recipeElement.classList.add('recipe');
 			
-                			
+            let ratingHtml = `<p>Bewertung: ${recipe.rating ? recipe.rating : 'Nicht bewertet'}</p>`;		
             let ingredientsHtml = '<ul>';
             if (recipe.ingredients) {
                 recipe.ingredients.forEach(ingredient => {
@@ -99,8 +108,11 @@ async function fetchRecipes(searchTerm = "") {
             recipeElement.innerHTML = `
                 <h2>${recipe.title}</h2>
                 <img src="${recipe.imageUrl || ''}" alt="Recipe image" style="max-width: 100%; height: auto;">
+				<h3>Benötigte Zutaten</h3>
                 ${ingredientsHtml}
+				<h3>Beschreibung</h3>
                 <p>${recipe.description}</p>
+				 ${ratingHtml}
 				<!-- TODO: Correctly implement edit -->
                <!-- <button class="editButton" data-id="${doc.id}">Edit</button> --> 
             `;
@@ -196,6 +208,7 @@ async function addRecipe() {
         menge: node.querySelector('.ingredient-quantity').value,
         zutat: node.querySelector('.ingredient-name').value
     })).filter(ingredient => ingredient.menge && ingredient.zutat);
+	const rating = document.getElementById('newRecipeRating').value;
 
     if (title && description && ingredients.length > 0 && imageFile) {
         try {
@@ -209,7 +222,8 @@ async function addRecipe() {
                 title,
                 description,
                 ingredients,
-                imageUrl // Store the image URL instead of the local file path
+                imageUrl, // Store the image URL instead of the local file path
+				rating
             });
 
             alert('Recipe added successfully!');
