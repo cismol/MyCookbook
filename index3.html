@@ -21,39 +21,42 @@
     </nav>
 </header>
 
-<!-- Added image upload input -->
+<div id="recipeList"></div>
+
 <div class="upload-form">
     <h2>Add New Recipe</h2>
     <input type="text" id="newRecipeTitle" placeholder="Title">
-	<!-- Inside the upload-form div, add after the description textarea -->
-	<div id="ingredientsList">
-		<h3>Ingredients</h3>
-		<div class="ingredient" id="ingredientTemplate">
-			<input type="text" placeholder="Menge" class="ingredient-quantity">
-			<input type="text" placeholder="Zutat" class="ingredient-name">
-			<button class="removeIngredient">Remove</button>
-		</div>
-	</div>
-	<button type="button" id="addIngredientButton">Add Ingredient</button>
     <textarea id="newRecipeDescription" placeholder="Description"></textarea>
-     <!--<input type="file" id="newRecipeImage" accept="image/*">-->
+    <input type="file" id="newRecipeImage" accept="image/*">
+    <div id="ingredientsList">
+        <h3>Ingredients</h3>
+        <div class="ingredient" id="ingredientTemplate" style="display: none;">
+            <input type="text" placeholder="Menge" class="ingredient-quantity">
+            <input type="text" placeholder="Zutat" class="ingredient-name">
+            <button type="button" class="removeIngredient">Remove</button>
+        </div>
+    </div>
+    <button type="button" id="addIngredientButton">Add Ingredient</button>
     <button id="uploadRecipeButton">Upload Recipe</button>
 </div>
 
-<div id="recipeList"></div>
-
 <div class="edit-form" id="editForm" style="display: none;">
     <h2>Edit Recipe</h2>
+    <input type="hidden" id="editRecipeId">
     <input type="text" id="editRecipeTitle" placeholder="Title">
     <textarea id="editRecipeDescription" placeholder="Description"></textarea>
-    <button id="saveEditButton">Save Changes</button>
+    <div id="editIngredientsList">
+        <h3>Ingredients</h3>
+    </div>
+    <button type="button" id="addEditIngredientButton">Add Ingredient</button>
+    <button type="button" id="updateRecipeButton">Update Recipe</button>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, getDocs, addDoc, doc, getDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    // Import Firebase Storage module
     import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+    
     
     const firebaseConfig = {
         apiKey: "AIzaSyDxvabrO3eNRTm37fE7G7sxckZBJrrnpHQ",
@@ -65,13 +68,13 @@
         measurementId: "G-1MXN7NP98K"
     };
 
+
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const storage = getStorage(app); // Initialize Firebase Storage
+    const storage = getStorage(app);
 
     document.getElementById('uploadRecipeButton').addEventListener('click', addRecipe);
     document.getElementById('searchButton').addEventListener('click', () => fetchRecipes(document.getElementById('searchInput').value.trim()));
-
 
 async function fetchRecipes(searchTerm = "") {
     const recipesCollectionRef = collection(db, 'recipes');
@@ -94,11 +97,12 @@ async function fetchRecipes(searchTerm = "") {
             }
             ingredientsHtml += '</ul>';
             recipeElement.innerHTML = `
-                <img src="${recipe.imageUrl || ''}" alt="Recipe image" style="max-width: 100%; height: auto;">
                 <h2>${recipe.title}</h2>
+                <img src="${recipe.imageUrl || ''}" alt="Recipe image" style="max-width: 100%; height: auto;">
                 ${ingredientsHtml}
                 <p>${recipe.description}</p>
-                <button class="editButton" data-id="${doc.id}">Edit</button>
+				<!-- TODO: Correctly implement edit -->
+               <!-- <button class="editButton" data-id="${doc.id}">Edit</button> --> 
             `;
 			
 				const deleteButton = document.createElement('button');
@@ -117,9 +121,13 @@ async function fetchRecipes(searchTerm = "") {
     });
 }
 
-
-
-
+  async function deleteRecipe(docId) {
+        if (confirm('Are you sure you want to delete this recipe?')) {
+            await deleteDoc(doc(db, "recipes", docId));
+            alert('Recipe deleted successfully.');
+            fetchRecipes(); // Refresh the list after deletion
+        }
+    }
 
     async function showEditForm(docId) {
         const docRef = doc(db, "recipes", docId);
@@ -156,55 +164,95 @@ async function fetchRecipes(searchTerm = "") {
 	
 	document.getElementById('addIngredientButton').addEventListener('click', addIngredientField);
 document.addEventListener('click', function(e) {
-    if (e.target && e.target.classList.contains('removeIngredient')) {
+    if (e.target && e.target.classList.contains('removeIngredient') && ingredientsNodes.length > 0) {
         e.target.parentNode.remove();
-    }
+        }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize the first ingredient field on page load
+    addIngredientField();
+    document.getElementById('addIngredientButton').addEventListener('click', addIngredientField);
+    document.getElementById('uploadRecipeButton').addEventListener('click', addRecipe);
+    // Additional initialization code as needed
 });
 
 function addIngredientField() {
     const ingredientsList = document.getElementById('ingredientsList');
     const newIngredient = document.getElementById('ingredientTemplate').cloneNode(true);
-    newIngredient.id = ''; // Remove the id to avoid duplicates
     newIngredient.style.display = 'flex'; // Make it visible
+    // Ensure the cloned node is not the template anymore
+    newIngredient.classList.remove('ingredient-template');
+    newIngredient.id = '';
     ingredientsList.appendChild(newIngredient);
 }
 
 async function addRecipe() {
     const title = document.getElementById('newRecipeTitle').value.trim();
     const description = document.getElementById('newRecipeDescription').value.trim();
+    const imageFile = document.getElementById('newRecipeImage').files[0]; // Get the file from the input
     const ingredientsNodes = document.querySelectorAll('.ingredient:not(#ingredientTemplate)');
     const ingredients = Array.from(ingredientsNodes).map(node => ({
         menge: node.querySelector('.ingredient-quantity').value,
         zutat: node.querySelector('.ingredient-name').value
     })).filter(ingredient => ingredient.menge && ingredient.zutat);
 
-    // Check for title, description, and at least one ingredient
-    if (title && description && ingredients.length > 0) {
+    if (title && description && ingredients.length > 0 && imageFile) {
         try {
-            await addDoc(collection(db, "recipes"), { title, description, ingredients });
-            // Refresh the list, clear the form, and alert success as before
-            fetchRecipes();
+            // Upload the image to Firebase Storage
+            const imageRef = ref(storage, `recipeImages/${imageFile.name}_${Date.now()}`);
+            const uploadResult = await uploadBytes(imageRef, imageFile);
+            const imageUrl = await getDownloadURL(uploadResult.ref);
+
+            // Store the recipe data along with the image URL in Firestore
+            await addDoc(collection(db, "recipes"), {
+                title,
+                description,
+                ingredients,
+                imageUrl // Store the image URL instead of the local file path
+            });
+
+            alert('Recipe added successfully!');
             document.getElementById('newRecipeTitle').value = '';
             document.getElementById('newRecipeDescription').value = '';
-            ingredientsNodes.forEach(node => node.remove()); // Remove all ingredient inputs except the template
-            addIngredientField(); // Add a fresh ingredient input
-            alert('Recipe added successfully!');
+            document.getElementById('newRecipeImage').value = ''; // Clear the file input
+            resetIngredientsList();
         } catch (error) {
             console.error("Error adding recipe: ", error);
             alert('Failed to add recipe.');
         }
     } else {
-        alert('Title, description, and at least one ingredient are required.');
+        alert('Title, description, an image, and at least one ingredient are required.');
     }
+    // Optionally reload the page or fetch recipes again to show the new addition
+    fetchRecipes();
 }
 
-  async function deleteRecipe(docId) {
-        if (confirm('Are you sure you want to delete this recipe?')) {
-            await deleteDoc(doc(db, "recipes", docId));
-            alert('Recipe deleted successfully.');
-            fetchRecipes(); // Refresh the list after deletion
+
+function resetIngredientsList() {
+    // Clear existing ingredients
+    document.querySelectorAll('.ingredient:not(#ingredientTemplate)').forEach(el => el.remove());
+    // Add a new ingredient field for the next recipe
+    addIngredientField();
+}
+
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.classList.contains('removeIngredient')) {
+        // Get all the ingredient nodes excluding the template
+        const ingredientsNodes = document.querySelectorAll('.ingredient:not(#ingredientTemplate)');
+        
+        // Only allow removal if there are more than one ingredient elements
+        if (ingredientsNodes.length > 0) {
+            e.target.parentNode.remove();
+        } else {
+            alert('You must have at least one ingredient.');
+			addIngredientField();
         }
     }
+});
+
+
+
 
 
     fetchRecipes();
