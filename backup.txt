@@ -23,20 +23,20 @@
 
 <div id="recipeList"></div>
 
-<div class="upload-form">
+<div class="upload-form" id="addRecipeSection">
     <h2>Neues Rezept hinzufügen</h2>
-    <input type="text" id="newRecipeTitle" placeholder="Title">
-    <input type="file" id="newRecipeImage" accept="image/*" placeholder="Image" style="display:block; visibility: visible;">
+    <input type="text" id="newRecipeTitle" placeholder="Title" class="inputTitle">
+	</br>
     <textarea id="newRecipeDescription" placeholder="Description"></textarea>
     <div id="ingredientsList">
-        <h3>Ingredients</h3>
+        <h3>Zutaten</h3>
         <div class="ingredient" id="ingredientTemplate" style="display: none;">
             <input type="text" placeholder="Menge" class="ingredient-quantity">
             <input type="text" placeholder="Zutat" class="ingredient-name">
-            <button type="button" class="removeIngredient">Remove</button>
+            <button type="button" class="removeIngredient">X</button>
         </div>
     </div>
-    <button type="button" id="addIngredientButton">Add Ingredient</button>
+    <button type="button" id="addIngredientButton">Zutat hinzufügen</button>
 	    <!-- Bewertung Dropdown -->
     <select id="newRecipeRating">
         <option value="">Bewertung auswählen</option>
@@ -46,6 +46,9 @@
         <option value="4 - sehr gut">4 - sehr gut</option>
         <option value="5 - excelent">5 - excelent</option>
     </select>
+    <input type="file" id="newRecipeImage" accept="image/*" placeholder="Image" class="searchInput">
+		<img id="uploadPreviewImage" src="" alt="Preview" style="max-width: 100px; display: none;"/>
+	</br>
     <button id="uploadRecipeButton">Upload Recipe</button>
 </div>
 
@@ -55,11 +58,16 @@
     <input type="text" id="editRecipeTitle" placeholder="Title">
     <textarea id="editRecipeDescription" placeholder="Description"></textarea>
     <div id="editIngredientsList">
-        <h3>Ingredients</h3>
+        <h3>Zutaten</h3>
     </div>
-    <button type="button" id="addEditIngredientButton">Add Ingredient</button>
+    <button type="button" id="addEditIngredientButton">Zutat hinzufügen</button>
     <button type="button" id="updateRecipeButton">Update Recipe</button>
 </div>
+
+<button id="backToTopBtn" class="fixedButton">Back to Top</button>
+<button id="goToAddRecipeBtn" class="fixedButton">Rezept hinzufügen</button>
+
+
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -108,17 +116,18 @@ async function fetchRecipes(searchTerm = "") {
             recipeElement.innerHTML = `
                 <h2>${recipe.title}</h2>
                 <img src="${recipe.imageUrl || ''}" alt="Recipe image" style="max-width: 100%; height: auto;">
-				<h3>Benötigte Zutaten</h3>
+				<h3>Benötigte Zutaten für ${recipe.title}</h3>
                 ${ingredientsHtml}
 				<h3>Beschreibung</h3>
                 <p>${recipe.description}</p>
 				 ${ratingHtml}
 				<!-- TODO: Correctly implement edit -->
-               <!-- <button class="editButton" data-id="${doc.id}">Edit</button> --> 
+                <button class="editButton" data-id="${doc.id}">Edit</button>
             `;
 			
 				const deleteButton = document.createElement('button');
-                deleteButton.textContent = 'Delete';
+				deleteButton.id = 'deleteButton';
+                deleteButton.textContent = 'Rezept löschen';
                 deleteButton.onclick = () => deleteRecipe(doc.id);
                 recipeElement.appendChild(deleteButton);
 
@@ -134,9 +143,9 @@ async function fetchRecipes(searchTerm = "") {
 }
 
   async function deleteRecipe(docId) {
-        if (confirm('Are you sure you want to delete this recipe?')) {
+        if (confirm('Rezept wirklich endgültig löschen?')) {
             await deleteDoc(doc(db, "recipes", docId));
-            alert('Recipe deleted successfully.');
+            alert('Rezept erfolgreich gelöscht.');
             fetchRecipes(); // Refresh the list after deletion
         }
     }
@@ -161,7 +170,7 @@ async function fetchRecipes(searchTerm = "") {
             // Show the form
             const editForm = document.getElementById('editForm');
             editForm.style.display = 'block';
-            document.getElementById('saveEditButton').setAttribute('data-id', docId);
+            document.getElementById('updateRecipeButton').setAttribute('data-id', docId);
 
             // Ensure at least one ingredient field is available
             if (recipeData.ingredients.length === 0) {
@@ -226,17 +235,17 @@ async function addRecipe() {
 				rating
             });
 
-            alert('Recipe added successfully!');
+            alert('Rezept erfolgreich hinzugrfügt!');
             document.getElementById('newRecipeTitle').value = '';
             document.getElementById('newRecipeDescription').value = '';
             document.getElementById('newRecipeImage').value = ''; // Clear the file input
             resetIngredientsList();
         } catch (error) {
             console.error("Error adding recipe: ", error);
-            alert('Failed to add recipe.');
+            alert('Fehler beim Hinzufügen des Rezepts.');
         }
     } else {
-        alert('Title, description, an image, and at least one ingredient are required.');
+        alert('Titel, Beschreibung, Bild, und mindistens eine Zutat müssen hinzugefügt werden.');
     }
     // Optionally reload the page or fetch recipes again to show the new addition
     fetchRecipes();
@@ -259,17 +268,49 @@ document.addEventListener('click', function(e) {
         if (ingredientsNodes.length > 0) {
             e.target.parentNode.remove();
         } else {
-            alert('You must have at least one ingredient.');
+            alert('Mindestens eine Zutat wird benötigt.');
 			addIngredientField();
         }
     }
 });
 
+fetchRecipes();
+
+// When the user scrolls down 20px from the top of the document, show the button
+window.onscroll = function() {scrollFunction()};
+
+function scrollFunction() {
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        document.getElementById("backToTopBtn").style.display = "block";
+    } else {
+        document.getElementById("backToTopBtn").style.display = "none";
+    }
+}
+
+// When the user clicks on the button, scroll to the top of the document
+document.getElementById("backToTopBtn").addEventListener("click", function() {
+    window.scrollTo({top: 0, behavior: 'smooth'});
+});
 
 
+document.getElementById("goToAddRecipeBtn").addEventListener("click", function() {
+    document.getElementById("addRecipeSection").scrollIntoView({behavior: 'smooth'});
+});
 
 
-    fetchRecipes();
+// Image Upload Preview
+document.getElementById('newRecipeImage').addEventListener('change', function() {
+    const file = this.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const previewImage = document.getElementById('uploadPreviewImage');
+            previewImage.src = e.target.result;
+            previewImage.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+});
 </script>
 
 </body>

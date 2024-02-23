@@ -47,6 +47,7 @@
         <option value="5 - excelent">5 - excelent</option>
     </select>
     <input type="file" id="newRecipeImage" accept="image/*" placeholder="Image" class="searchInput">
+		<img id="uploadPreviewImage" src="" alt="Preview" style="max-width: 100px; display: none;"/>
 	</br>
     <button id="uploadRecipeButton">Upload Recipe</button>
 </div>
@@ -54,14 +55,35 @@
 <div class="edit-form" id="editForm" style="display: none;">
     <h2>Edit Recipe</h2>
     <input type="hidden" id="editRecipeId">
-    <input type="text" id="editRecipeTitle" placeholder="Title">
-    <textarea id="editRecipeDescription" placeholder="Description"></textarea>
+    <label for="editRecipeTitle">Title:</label>
+    <input type="text" id="editRecipeTitle" placeholder="Title" class="form-control">
+    
+    <label for="editRecipeDescription">Description:</label>
+    <textarea id="editRecipeDescription" placeholder="Description" class="form-control"></textarea>
+    
+    <label for="editRecipeImage">Recipe Image:</label>
+    <input type="file" id="editRecipeImage" accept="image/*" class="form-control">
+    <img id="editPreviewImage" src="" alt="Preview" style="max-width: 100px; display: none;"/>
+    
     <div id="editIngredientsList">
         <h3>Zutaten</h3>
+        <!-- Ingredients will be dynamically added here -->
     </div>
     <button type="button" id="addEditIngredientButton">Zutat hinzufügen</button>
-    <button type="button" id="updateRecipeButton">Update Recipe</button>
+    
+    <label for="editRecipeRating">Rating:</label>
+    <select id="editRecipeRating" class="form-control">
+        <option value="">Bewertung auswählen</option>
+        <option value="1 - schlecht">1 - schlecht</option>
+        <option value="2 - ok">2 - ok</option>
+        <option value="3 - gut">3 - gut</option>
+        <option value="4 - sehr gut">4 - sehr gut</option>
+        <option value="5 - excellent">5 - excellent</option>
+    </select>
+    
+    <button type="button" id="updateRecipeButton" class="btn-update">Update Recipe</button>
 </div>
+
 
 <button id="backToTopBtn" class="fixedButton">Back to Top</button>
 <button id="goToAddRecipeBtn" class="fixedButton">Rezept hinzufügen</button>
@@ -121,7 +143,7 @@ async function fetchRecipes(searchTerm = "") {
                 <p>${recipe.description}</p>
 				 ${ratingHtml}
 				<!-- TODO: Correctly implement edit -->
-               <!-- <button class="editButton" data-id="${doc.id}">Edit</button> --> 
+                <button class="editButton" data-id="${doc.id}">Edit</button>
             `;
 			
 				const deleteButton = document.createElement('button');
@@ -149,36 +171,33 @@ async function fetchRecipes(searchTerm = "") {
         }
     }
 
-    async function showEditForm(docId) {
-        const docRef = doc(db, "recipes", docId);
-        const docSnap = await getDoc(docRef);
+async function showEditForm(docId) {
+    const docRef = doc(db, "recipes", docId);
+    const docSnap = await getDoc(docRef);
 
-        if (docSnap.exists()) {
-            const recipeData = docSnap.data();
-            document.getElementById('editRecipeTitle').value = recipeData.title;
-            document.getElementById('editRecipeDescription').value = recipeData.description;
-            
-            // Clear existing ingredient inputs except the template
-            document.querySelectorAll('.ingredient:not(#ingredientTemplate)').forEach(el => el.remove());
-
-            // Populate the form with existing ingredients
-            recipeData.ingredients.forEach((ingredient, index) => {
-                addIngredientField(ingredient); // Pass ingredient data to populate fields
-            });
-
-            // Show the form
-            const editForm = document.getElementById('editForm');
-            editForm.style.display = 'block';
-            document.getElementById('saveEditButton').setAttribute('data-id', docId);
-
-            // Ensure at least one ingredient field is available
-            if (recipeData.ingredients.length === 0) {
-                addIngredientField(); // Add an empty ingredient field if none exist
-            }
-        } else {
-            console.log("No such document!");
+    if (docSnap.exists()) {
+        const recipe = docSnap.data();
+        document.getElementById('editRecipeId').value = docId;
+        document.getElementById('editRecipeTitle').value = recipe.title;
+        document.getElementById('editRecipeDescription').value = recipe.description;
+        // Populate rating if available
+        if (document.getElementById('editRecipeRating')) {
+            document.getElementById('editRecipeRating').value = recipe.rating || '';
         }
+        // Clear existing ingredients
+        const editIngredientsList = document.getElementById('editIngredientsList');
+        editIngredientsList.innerHTML = ''; // Clear the list
+        // Populate ingredients
+        recipe.ingredients.forEach(ingredient => addEditIngredient(ingredient));
+        // Handle image preview if needed...
+
+        document.getElementById('editForm').style.display = 'block';
+    } else {
+        console.error("Document does not exist!");
     }
+}
+
+
 
 
 	
@@ -273,7 +292,23 @@ document.addEventListener('click', function(e) {
     }
 });
 
+
+// Image Upload Preview
+document.getElementById('newRecipeImage').addEventListener('change', function() {
+    const file = this.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const previewImage = document.getElementById('uploadPreviewImage');
+            previewImage.src = e.target.result;
+            previewImage.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
 fetchRecipes();
+
 
 // When the user scrolls down 20px from the top of the document, show the button
 window.onscroll = function() {scrollFunction()};
@@ -295,6 +330,97 @@ document.getElementById("backToTopBtn").addEventListener("click", function() {
 document.getElementById("goToAddRecipeBtn").addEventListener("click", function() {
     document.getElementById("addRecipeSection").scrollIntoView({behavior: 'smooth'});
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Existing code for initialization...
+    fetchRecipes();
+    setupEventListeners();
+});
+
+function setupEventListeners() {
+    document.getElementById('uploadRecipeButton').addEventListener('click', addRecipe);
+    document.getElementById('searchButton').addEventListener('click', () => fetchRecipes(document.getElementById('searchInput').value.trim()));
+    document.getElementById('updateRecipeButton').addEventListener('click', updateRecipe);
+    // Add more listeners as required...
+}
+
+
+
+function addEditIngredient(ingredient) {
+    const ingredientsList = document.getElementById('editIngredientsList');
+    const ingredientDiv = document.createElement('div');
+    ingredientDiv.classList.add('ingredient');
+    ingredientDiv.innerHTML = `
+        <input type="text" placeholder="Menge" class="ingredient-quantity form-control" value="${ingredient.menge || ''}">
+        <input type="text" placeholder="Zutat" class="ingredient-name form-control" value="${ingredient.zutat || ''}">
+        <button type="button" class="removeIngredient">Remove</button>
+    `;
+    ingredientsList.appendChild(ingredientDiv);
+}
+
+async function updateRecipe() {
+    const docId = document.getElementById('editRecipeId').value;
+    const title = document.getElementById('editRecipeTitle').value.trim();
+    const description = document.getElementById('editRecipeDescription').value.trim();
+    const rating = document.getElementById('editRecipeRating').value;
+    const imageFile = document.getElementById('editRecipeImage').files[0]; // Check if there's a new image file
+
+    // Collecting ingredients from dynamically added fields
+    const ingredientsElements = document.querySelectorAll('#editIngredientsList .ingredient');
+    const ingredients = Array.from(ingredientsElements).map(el => ({
+        menge: el.querySelector('.ingredient-quantity').value.trim(),
+        zutat: el.querySelector('.ingredient-name').value.trim()
+    })).filter(ingredient => ingredient.menge && ingredient.zutat);
+
+    let imageUrl;
+    // Handle image update
+    if (imageFile) {
+        // Upload the new image to Firebase Storage
+        const imageRef = ref(storage, `recipeImages/${imageFile.name}_${Date.now()}`);
+        const uploadResult = await uploadBytes(imageRef, imageFile);
+        imageUrl = await getDownloadURL(uploadResult.ref); // Get URL of uploaded image
+    }
+
+    const recipeData = { title, description, ingredients, rating };
+    if (imageUrl) {
+        recipeData.imageUrl = imageUrl; // Add new image URL to recipe data if image was updated
+    }
+
+    if (title && description && ingredients.length > 0) {
+        try {
+            await updateDoc(doc(db, "recipes", docId), recipeData);
+            alert('Rezept erfolgreich aktualisiert!');
+            document.getElementById('editForm').style.display = 'none'; // Optionally hide the edit form
+            fetchRecipes(); // Optionally refresh the list of recipes
+        } catch (error) {
+            console.error("Error updating recipe: ", error);
+            alert('Fehler beim Aktualisieren des Rezepts.');
+        }
+    } else {
+        alert('Titel, Beschreibung und mindestens eine Zutat sind erforderlich.');
+    }
+}
+
+// Attach the event listener to the "Update Recipe" button
+document.getElementById('updateRecipeButton').addEventListener('click', updateRecipe);
+
+	document.getElementById('addEditIngredientButton').addEventListener('click', addIngredientField);
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.classList.contains('removeIngredient') && ingredientsNodes.length > 0) {
+        e.target.parentNode.remove();
+        }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize the first ingredient field on page load
+    addIngredientField();
+    document.getElementById('addEditIngredientButton').addEventListener('click', addIngredientField);
+    document.getElementById('updateRecipeButton').addEventListener('click', updateRecipe);
+    // Additional initialization code as needed
+});
+
+
+
 
 </script>
 
