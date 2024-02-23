@@ -24,10 +24,10 @@
 <div id="recipeList"></div>
 
 <div class="upload-form">
-    <h2>Add New Recipe</h2>
+    <h2>Neues Rezept hinzufügen</h2>
     <input type="text" id="newRecipeTitle" placeholder="Title">
+    <input type="file" id="newRecipeImage" accept="image/*" placeholder="Image" style="display:block; visibility: visible;">
     <textarea id="newRecipeDescription" placeholder="Description"></textarea>
-    <input type="file" id="newRecipeImage" accept="image/*">
     <div id="ingredientsList">
         <h3>Ingredients</h3>
         <div class="ingredient" id="ingredientTemplate" style="display: none;">
@@ -99,7 +99,9 @@ async function fetchRecipes(searchTerm = "") {
             recipeElement.innerHTML = `
                 <h2>${recipe.title}</h2>
                 <img src="${recipe.imageUrl || ''}" alt="Recipe image" style="max-width: 100%; height: auto;">
+				<h3>Benötigte Zutaten</h3>
                 ${ingredientsHtml}
+				<h3>Beschreibung</h3>
                 <p>${recipe.description}</p>
 				<!-- TODO: Correctly implement edit -->
                <!-- <button class="editButton" data-id="${doc.id}">Edit</button> --> 
