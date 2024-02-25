@@ -75,7 +75,7 @@ button, input::file-selector-button, #newRecipeRating {
     font-size: 16px;
 }
 
-.removeIngredient, #deleteButton {
+.removeIngredient, #deleteButton, #cancleUploadRecipeButton {
 	background-color: #A1142E;
 }
 

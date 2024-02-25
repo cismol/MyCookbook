@@ -49,6 +49,7 @@
 		<img id="uploadPreviewImage" src="" alt="Preview" style="max-width: 100px; display: none;"/>
 	</br>
     <button id="uploadRecipeButton">Upload Recipe</button>
+    <button id="cancleUploadRecipeButton">Abbrechen</button>
 </div>
 
 <div id="recipeList"></div>
@@ -113,6 +114,7 @@
     const storage = getStorage(app);
 
     document.getElementById('uploadRecipeButton').addEventListener('click', addRecipe);
+    document.getElementById('cancleUploadRecipeButton').addEventListener('click', hideAddRecipesDiv);
     document.getElementById('searchButton').addEventListener('click', () => fetchRecipes(document.getElementById('searchInput').value.trim()));
     document.getElementById('addRecipeBtn').addEventListener('click', showAddRecipesDiv);
 
@@ -202,8 +204,8 @@ async function showEditForm(docId) {
 
 
 
-	
-	document.getElementById('addIngredientButton').addEventListener('click', addIngredientField);
+// add new ingredient	
+document.getElementById('addIngredientButton').addEventListener('click', addIngredientField);
 document.addEventListener('click', function(e) {
     if (e.target && e.target.classList.contains('removeIngredient') && ingredientsNodes.length > 0) {
         e.target.parentNode.remove();
@@ -218,6 +220,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // Additional initialization code as needed
 });
 
+// add new ingredient on edit
+document.getElementById('addEditIngredientButton').addEventListener('click', addEditIngredientField);
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.classList.contains('removeIngredient') && ingredientsNodes.length > 0) {
+        e.target.parentNode.remove();
+        }
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize the first ingredient field on page load
+    addEditIngredientField();
+    document.getElementById('addEditIngredientButton').addEventListener('click', addEditIngredientField);
+    document.getElementById('updateRecipeButton').addEventListener('click', updateRecipe);
+    // Additional initialization code as needed
+});
+
 function addIngredientField() {
     const ingredientsList = document.getElementById('ingredientsList');
     const newIngredient = document.getElementById('ingredientTemplate').cloneNode(true);
@@ -226,6 +244,16 @@ function addIngredientField() {
     newIngredient.classList.remove('ingredient-template');
     newIngredient.id = '';
     ingredientsList.appendChild(newIngredient);
+}
+
+function addEditIngredientField() {
+    const editIngredientsList = document.getElementById('editIngredientsList');
+    const newIngredient = document.getElementById('ingredientTemplate').cloneNode(true);
+    newIngredient.style.display = 'flex'; // Make it visible
+    // Ensure the cloned node is not the template anymore
+    newIngredient.classList.remove('ingredient-template');
+    newIngredient.id = '';
+    editIngredientsList.appendChild(newIngredient);
 }
 
 async function addRecipe() {
@@ -404,22 +432,6 @@ async function updateRecipe() {
 
 // Attach the event listener to the "Update Recipe" button
 document.getElementById('updateRecipeButton').addEventListener('click', updateRecipe);
-
-	document.getElementById('addEditIngredientButton').addEventListener('click', addIngredientField);
-document.addEventListener('click', function(e) {
-    if (e.target && e.target.classList.contains('removeIngredient') && ingredientsNodes.length > 0) {
-        e.target.parentNode.remove();
-        }
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize the first ingredient field on page load
-    addIngredientField();
-    document.getElementById('addEditIngredientButton').addEventListener('click', addIngredientField);
-    document.getElementById('updateRecipeButton').addEventListener('click', updateRecipe);
-    // Additional initialization code as needed
-});
-
 
 async function showAddRecipesDiv() {
    document.getElementById('addRecipeSection').style.display = "block";
