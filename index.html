@@ -178,7 +178,6 @@ async function fetchRecipes(searchTerm = "") {
 async function showEditForm(docId) {
     const docRef = doc(db, "recipes", docId);
     const docSnap = await getDoc(docRef);
-
     if (docSnap.exists()) {
         const recipe = docSnap.data();
         document.getElementById('editRecipeId').value = docId;
@@ -196,9 +195,10 @@ async function showEditForm(docId) {
         // Handle image preview if needed...
 
         document.getElementById('editForm').style.display = 'block';
+		document.getElementById('editForm').scrollIntoView();
     } else {
         console.error("Document does not exist!");
-    }
+    }	
 }
 
 
