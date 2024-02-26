@@ -24,9 +24,9 @@
 
 <div class="upload-form" id="addRecipeSection" style="display:none;">
     <h2>Neues Rezept hinzufügen</h2>
-    <input type="text" id="newRecipeTitle" placeholder="Title" class="inputTitle">
+    <input type="text" id="newRecipeTitle" placeholder="Titel" class="inputTitle">
 	</br>
-    <textarea id="newRecipeDescription" placeholder="Description"></textarea>
+    <textarea id="newRecipeDescription" placeholder="Beschreibung"></textarea>
     <div id="ingredientsList">
         <h3>Zutaten</h3>
         <div class="ingredient" id="ingredientTemplate" style="display: none;">
@@ -44,12 +44,26 @@
         <option value="3 - gut">3 - gut</option>
         <option value="4 - sehr gut">4 - sehr gut</option>
         <option value="5 - excelent">5 - excelent</option>
+    </select>	
+	<select id="newRecipeNr">
+        <option value="">Anzahl Personen</option>
+        <option value="1">1 Person</option>
+        <option value="2">2 Personen</option>
+        <option value="3">3 Personen</option>
+        <option value="4">4 Personen</option>
+        <option value="5">5 Personen</option>
+        <option value="6">6 Personen</option>
+        <option value="7">7 Personen</option>
+        <option value="8">8 Personen</option>
+        <option value="9">9 Personen</option>
+        <option value="10">10 Personen</option>
     </select>
-	<input type="text" id="newRecipeTime" placeholder="Time" class="inputTitle">
-	<input type="text" id="newRecipeTimeTotal" placeholder="Time Total" class="inputTitle">
-    <input type="file" id="newRecipeImage" accept="image/*" placeholder="Image" class="searchInput">
-		<img id="uploadPreviewImage" src="" alt="Preview" style="max-width: 100px; display: none;"/>
 	</br>
+	<input type="text" id="newRecipeTime" placeholder="Kochzeit" class="inputTitle">
+	<input type="text" id="newRecipeTimeTotal" placeholder="Gesamtzeit" class="inputTitle">
+    <input type="file" id="newRecipeImage" accept="image/*" placeholder="Image" class="searchInput">
+	</br>
+	<img id="uploadPreviewImage" src="" alt="Preview" style="max-width: 100px; display: none;"/>
     <button id="uploadRecipeButton">Upload Recipe</button>
     <button id="cancleUploadRecipeButton">Abbrechen</button>
 </div>
@@ -59,15 +73,9 @@
 <div class="edit-form" id="editForm" style="display: none;">
     <h2>Edit Recipe</h2>
     <input type="hidden" id="editRecipeId">
-    <label for="editRecipeTitle">Title:</label>
-    <input type="text" id="editRecipeTitle" placeholder="Title" class="form-control">
-    
-    <label for="editRecipeDescription">Description:</label>
-    <textarea id="editRecipeDescription" placeholder="Description" class="form-control"></textarea>
-    
-    <label for="editRecipeImage">Recipe Image:</label>
-    <input type="file" id="editRecipeImage" accept="image/*" class="form-control">
-    <img id="editPreviewImage" src="" alt="Preview" style="max-width: 100px; display: none;"/>
+    <input type="text" id="editRecipeTitle" placeholder="Titel" class="inputTitle">
+    </br>
+    <textarea id="editRecipeDescription" placeholder="Beschreibung" class="inputTitle"></textarea>
     
     <div id="editIngredientsList">
         <h3>Zutaten</h3>
@@ -75,7 +83,6 @@
     </div>
     <button type="button" id="addEditIngredientButton">Zutat hinzufügen</button>
     
-    <label for="editRecipeRating">Rating:</label>
     <select id="editRecipeRating" class="form-control">
         <option value="">Bewertung auswählen</option>
         <option value="1 - schlecht">1 - schlecht</option>
@@ -84,10 +91,25 @@
         <option value="4 - sehr gut">4 - sehr gut</option>
         <option value="5 - excellent">5 - excellent</option>
     </select>	
-    <label for="editRecipeTime">Time:</label>
-    <input type="text" id="editRecipeTime" placeholder="Time" class="form-control">
-    <label for="editRecipeTimeTotal">Time Total:</label>
-	<input type="text" id="editRecipeTimeTotal" placeholder="Time Total" class="form-control">
+	<select id="editRecipeNr">
+        <option value="">Anzahl Personen</option>
+        <option value="1">1 Person</option>
+        <option value="2">2 Personen</option>
+        <option value="3">3 Personen</option>
+        <option value="4">4 Personen</option>
+        <option value="5">5 Personen</option>
+        <option value="6">6 Personen</option>
+        <option value="7">7 Personen</option>
+        <option value="8">8 Personen</option>
+        <option value="9">9 Personen</option>
+        <option value="10">10 Personen</option>
+    </select>
+	<label for="editRecipeImage">Recipe Image:</label>
+    <input type="file" id="editRecipeImage" accept="image/*" class="form-control">
+    <img id="editPreviewImage" src="" alt="Preview" style="max-width: 100px; display: none;"/>
+    
+    <input type="text" id="editRecipeTime" placeholder="Kochzeit" class="inputTitle">
+	<input type="text" id="editRecipeTimeTotal" placeholder="Gesamtzeit" class="inputTitle">
     <button type="button" id="updateRecipeButton" class="btn-update">Update Recipe</button>
 </div>
 
@@ -135,7 +157,7 @@ async function fetchRecipes(searchTerm = "") {
             const recipeElement = document.createElement('div');
             recipeElement.classList.add('recipe');
 			
-            let ratingHtml = `<h3>Bewertung: </h3> <p>${recipe.rating ? recipe.rating : 'Nicht bewertet'}</p>`;		
+            let ratingHtml = `<h3>Bewertung: </h3> <p>${recipe.rating ? recipe.rating : 'Nicht bewertet'}</p>`;	
             let ingredientsHtml = '<ul>';
             if (recipe.ingredients) {
                 recipe.ingredients.forEach(ingredient => {
@@ -146,7 +168,7 @@ async function fetchRecipes(searchTerm = "") {
             recipeElement.innerHTML = `
                 <h2>${recipe.title}</h2>
                 <img src="${recipe.imageUrl || ''}" alt="Recipe image" style="max-width: 100%; height: auto;">
-				<h3>Benötigte Zutaten für ${recipe.title}</h3>
+				<h3>Benötigte Zutaten für ${recipe.title} für ${recipe.nr} Personen</h3>
                 ${ingredientsHtml}
 				<h3>Beschreibung</h3>
                 <p>${recipe.description}</p>
@@ -193,6 +215,10 @@ async function showEditForm(docId) {
         // Populate rating if available
         if (document.getElementById('editRecipeRating')) {
             document.getElementById('editRecipeRating').value = recipe.rating || '';
+        }
+		// Populate nr if available
+		if (document.getElementById('editRecipeNr')) {
+            document.getElementById('editRecipeNr').value = recipe.nr || '';
         }
         // Clear existing ingredients
         const editIngredientsList = document.getElementById('editIngredientsList');
@@ -275,8 +301,9 @@ async function addRecipe() {
         zutat: node.querySelector('.ingredient-name').value
     })).filter(ingredient => ingredient.menge && ingredient.zutat);
 	const rating = document.getElementById('newRecipeRating').value;
+	const nr = document.getElementById('newRecipeNr').value;
 
-    if (title && description && ingredients.length > 0 && imageFile && rating && time && timeTotal) {
+    if (title && description && ingredients.length > 0 && imageFile && rating && time && timeTotal && nr) {
         try {
             // Upload the image to Firebase Storage
             const imageRef = ref(storage, `recipeImages/${imageFile.name}_${Date.now()}`);
@@ -291,6 +318,7 @@ async function addRecipe() {
                 imageUrl, // Store the image URL instead of the local file path
 				time,
 				timeTotal,
+				nr,
 				rating
             });
 
@@ -301,6 +329,7 @@ async function addRecipe() {
             document.getElementById('newRecipeTimeTotal').value = '';
             document.getElementById('newRecipeTime').value = '';
             document.getElementById('newRecipeRating').value = '';
+            document.getElementById('newRecipeNr').value = '';
             resetIngredientsList();
         } catch (error) {
             console.error("Error adding recipe: ", error);
@@ -408,6 +437,7 @@ async function updateRecipe() {
     const time = document.getElementById('editRecipeTime').value.trim();
     const timeTotal = document.getElementById('editRecipeTimeTotal').value.trim();
     const rating = document.getElementById('editRecipeRating').value;
+    const nr = document.getElementById('editRecipeNr').value;
     const imageFile = document.getElementById('editRecipeImage').files[0]; // Check if there's a new image file
 
     // Collecting ingredients from dynamically added fields
@@ -426,7 +456,7 @@ async function updateRecipe() {
         imageUrl = await getDownloadURL(uploadResult.ref); // Get URL of uploaded image
     }
 
-    const recipeData = { title, description, ingredients, rating, time, timeTotal };
+    const recipeData = { title, description, ingredients, rating, time, timeTotal, nr };
     if (imageUrl) {
         recipeData.imageUrl = imageUrl; // Add new image URL to recipe data if image was updated
     }
