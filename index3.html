@@ -30,7 +30,18 @@
     <div id="ingredientsList">
         <h3>Zutaten</h3>
         <div class="ingredient" id="ingredientTemplate" style="display: none;">
-            <input type="text" placeholder="Menge" class="ingredient-quantity">
+            <input type="number" placeholder="Menge" class="ingredient-quantity">
+            <!--<input type="text" placeholder="Einheit" class="ingredient-unit">-->
+			<select id="ingredientUnit" class="ingredient-unit">
+				<option value="">-</option>
+				<option value="tl">tl</option>
+				<option value="el">el</option>
+				<option value="gr">gr</option>
+				<option value="kg">kg</option>
+				<option value="ml">ml</option>
+				<option value="L">L</option>
+				<option value="stk">stk</option>
+			</select>	
             <input type="text" placeholder="Zutat" class="ingredient-name">
             <button type="button" class="removeIngredient">X</button>
         </div>
@@ -161,7 +172,7 @@ async function fetchRecipes(searchTerm = "") {
             let ingredientsHtml = '<ul>';
             if (recipe.ingredients) {
                 recipe.ingredients.forEach(ingredient => {
-                    ingredientsHtml += `<li>${ingredient.menge} - ${ingredient.zutat}</li>`;
+                    ingredientsHtml += `<li>${ingredient.menge} ${ingredient.einheit} - ${ingredient.zutat}</li>`;
                 });
             }
             ingredientsHtml += '</ul>';
@@ -298,8 +309,9 @@ async function addRecipe() {
     const ingredientsNodes = document.querySelectorAll('.ingredient:not(#ingredientTemplate)');
     const ingredients = Array.from(ingredientsNodes).map(node => ({
         menge: node.querySelector('.ingredient-quantity').value,
+        einheit: node.querySelector('.ingredient-unit').value,
         zutat: node.querySelector('.ingredient-name').value
-    })).filter(ingredient => ingredient.menge && ingredient.zutat);
+    })).filter(ingredient => ingredient.menge && ingredient.einheit && ingredient.zutat);
 	const rating = document.getElementById('newRecipeRating').value;
 	const nr = document.getElementById('newRecipeNr').value;
 
@@ -423,7 +435,18 @@ function addEditIngredient(ingredient) {
     const ingredientDiv = document.createElement('div');
     ingredientDiv.classList.add('ingredient');
     ingredientDiv.innerHTML = `
-        <input type="text" placeholder="Menge" class="ingredient-quantity form-control" value="${ingredient.menge || ''}">
+        <input type="number" placeholder="Menge" class="ingredient-quantity form-control" value="${ingredient.menge || ''}">
+        <!--<input type="text" placeholder="Einheit" class="ingredient-unit form-control" value="${ingredient.einheit || ''}">-->
+		<select id="editIngredientUnit" class="ingredient-unit" value="${ingredient.einheit || ''}">
+				<option value="${ingredient.einheit || ''}">${ingredient.einheit || ''}</option>
+				<option value="tl">tl</option>
+				<option value="el">el</option>
+				<option value="gr">gr</option>
+				<option value="kg">kg</option>
+				<option value="ml">ml</option>
+				<option value="L">L</option>
+				<option value="stk">stk</option>
+			</select>	
         <input type="text" placeholder="Zutat" class="ingredient-name form-control" value="${ingredient.zutat || ''}">
         <button type="button" class="removeIngredient">Remove</button>
     `;
@@ -444,8 +467,9 @@ async function updateRecipe() {
     const ingredientsElements = document.querySelectorAll('#editIngredientsList .ingredient');
     const ingredients = Array.from(ingredientsElements).map(el => ({
         menge: el.querySelector('.ingredient-quantity').value.trim(),
+        einheit: el.querySelector('.ingredient-unit').value.trim(),
         zutat: el.querySelector('.ingredient-name').value.trim()
-    })).filter(ingredient => ingredient.menge && ingredient.zutat);
+    })).filter(ingredient => ingredient.menge && ingredient.einheit && ingredient.zutat);
 
     let imageUrl;
     // Handle image update
