@@ -63,7 +63,7 @@ textarea {
 	padding-bottom: 15px;
 }
 
-button, input::file-selector-button, #newRecipeRating, #editRecipeRating, #newRecipeNr, #editRecipeNr, #newGinTonic, #newGinRating, #editGinRating, #newGinNr, #editGinNr, .searchFor {
+button, input::file-selector-button, #newRecipeRating, #editRecipeRating, #newRecipeNr, #editRecipeNr, #newGinTonic, #editGinTonic, #newGinRating, #editGinRating, #newGinNr, #editGinNr, .searchFor {
     border: none;
     background-color: #58af9b;
     color: #ffffff;

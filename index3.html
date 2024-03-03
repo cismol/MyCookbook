@@ -3,515 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Recipe Book</title>
+    <title>Simple Stuff Book</title>
     <link rel="stylesheet" type="text/css" href="style/style.css">
 </head>
 <body>
 <header>
-    <h1>My Cookbook</h1>
-    <div class="search-bar">
-        <input type="text" id="searchInput" class="search-input" placeholder="Search recipes...">
-		<button id="searchButton">Search</button>	
-    </div>
-	<button id="addRecipeBtn" >Rezept hinzufügen</button>
+    <h1>My Book of things</h1>
     <nav>
-        <a href="#">Home</a>
-        <a href="#">Recipes</a>
-        <a href="#">About</a>
-        <a href="#">Contact</a>
+        <a href="./index.html">Home</a>
+        <a href="files/recipe.html">Recipes</a>
+        <a href="files/gin.html">Gins</a>
     </nav>
 </header>
+<div class="index-form" id="homeDiv">
+<h3>Looking For Something</h3>
+<p>Today, I looked, and saw, and noticed.
 
-<div class="upload-form" id="addRecipeSection" style="display:none;">
-    <h2>Neues Rezept hinzufügen</h2>
-    <input type="text" id="newRecipeTitle" placeholder="Titel" class="inputTitle">
-	</br>
-    <textarea id="newRecipeDescription" placeholder="Beschreibung"></textarea>
-    <div id="ingredientsList">
-        <h3>Zutaten</h3>
-        <div class="ingredient" id="ingredientTemplate" style="display: none;">
-            <input type="number" placeholder="Menge" class="ingredient-quantity">
-            <!--<input type="text" placeholder="Einheit" class="ingredient-unit">-->
-			<select id="ingredientUnit" class="ingredient-unit">
-				<option value="">-</option>
-				<option value="tl">tl</option>
-				<option value="el">el</option>
-				<option value="gr">gr</option>
-				<option value="kg">kg</option>
-				<option value="ml">ml</option>
-				<option value="L">L</option>
-				<option value="stk">stk</option>
-			</select>	
-            <input type="text" placeholder="Zutat" class="ingredient-name">
-            <button type="button" class="removeIngredient">X</button>
-        </div>
-    </div>
-    <button type="button" id="addIngredientButton">Zutat hinzufügen</button>
-	    <!-- Bewertung Dropdown -->
-    <select id="newRecipeRating">
-        <option value="">Bewertung auswählen</option>
-        <option value="1 - schlecht">1 - schlecht</option>
-        <option value="2 - ok">2 - ok</option>
-        <option value="3 - gut">3 - gut</option>
-        <option value="4 - sehr gut">4 - sehr gut</option>
-        <option value="5 - excelent">5 - excelent</option>
-    </select>	
-	<select id="newRecipeNr">
-        <option value="">Anzahl Personen</option>
-        <option value="1">1 Person</option>
-        <option value="2">2 Personen</option>
-        <option value="3">3 Personen</option>
-        <option value="4">4 Personen</option>
-        <option value="5">5 Personen</option>
-        <option value="6">6 Personen</option>
-        <option value="7">7 Personen</option>
-        <option value="8">8 Personen</option>
-        <option value="9">9 Personen</option>
-        <option value="10">10 Personen</option>
-    </select>
-	</br>
-	<input type="text" id="newRecipeTime" placeholder="Kochzeit" class="inputTitle">
-	<input type="text" id="newRecipeTimeTotal" placeholder="Gesamtzeit" class="inputTitle">
-    <input type="file" id="newRecipeImage" accept="image/*" placeholder="Image" class="searchInput">
-	</br>
-	<img id="uploadPreviewImage" src="" alt="Preview" style="max-width: 100px; display: none;"/>
-    <button id="uploadRecipeButton">Upload Recipe</button>
-    <button id="cancleUploadRecipeButton">Abbrechen</button>
+Today, I searced, and began to seek,
+That new thing.
+
+I never know what it is or where it will be.
+
+Forever, I will be seeking that special thing,
+something I cannot name.
+
+Forever, I will be searching for a new way to look,
+For that thing, because, it is new,
+
+I really do not know how to look for it.
+
+I see life as a paradox, folding in on itself,
+from the time we are born, til the time we are dead.
+
+Life, is a mystery and we all must fulfill it to the most.
+
+Today, I look for something, something new, something old,
+hopefully something I can use.
+
+I look for something</p>
+
+<p style="font-weight:bold; font-style:italic"> - Michael Bogle</p>
+</br>
+
+<h3> What are you looking for?</h3>
+</br>
+<a href="files/recipe.html" class="searchFor">I look for recipes</a>
+<a href="files/gin.html" class="searchFor">I look for gins</a> </br></br>
+<a href="https://libraryofbabel.info/" class="searchFor" style="font-color:white; color:white; background-color:white;">I look for something else</a>
+
 </div>
 
-<div id="recipeList"></div>
-
-<div class="edit-form" id="editForm" style="display: none;">
-    <h2>Edit Recipe</h2>
-    <input type="hidden" id="editRecipeId">
-    <input type="text" id="editRecipeTitle" placeholder="Titel" class="inputTitle">
-    </br>
-    <textarea id="editRecipeDescription" placeholder="Beschreibung" class="inputTitle"></textarea>
-    
-    <div id="editIngredientsList">
-        <h3>Zutaten</h3>
-        <!-- Ingredients will be dynamically added here -->
-    </div>
-    <button type="button" id="addEditIngredientButton">Zutat hinzufügen</button>
-    
-    <select id="editRecipeRating" class="form-control">
-        <option value="">Bewertung auswählen</option>
-        <option value="1 - schlecht">1 - schlecht</option>
-        <option value="2 - ok">2 - ok</option>
-        <option value="3 - gut">3 - gut</option>
-        <option value="4 - sehr gut">4 - sehr gut</option>
-        <option value="5 - excellent">5 - excellent</option>
-    </select>	
-	<select id="editRecipeNr">
-        <option value="">Anzahl Personen</option>
-        <option value="1">1 Person</option>
-        <option value="2">2 Personen</option>
-        <option value="3">3 Personen</option>
-        <option value="4">4 Personen</option>
-        <option value="5">5 Personen</option>
-        <option value="6">6 Personen</option>
-        <option value="7">7 Personen</option>
-        <option value="8">8 Personen</option>
-        <option value="9">9 Personen</option>
-        <option value="10">10 Personen</option>
-    </select>
-	<label for="editRecipeImage">Recipe Image:</label>
-    <input type="file" id="editRecipeImage" accept="image/*" class="form-control">
-    <img id="editPreviewImage" src="" alt="Preview" style="max-width: 100px; display: none;"/>
-    
-    <input type="text" id="editRecipeTime" placeholder="Kochzeit" class="inputTitle">
-	<input type="text" id="editRecipeTimeTotal" placeholder="Gesamtzeit" class="inputTitle">
-    <button type="button" id="updateRecipeButton" class="btn-update">Update Recipe</button>
-</div>
-
-
-<!--<button id="backToTopBtn" class="fixedButton">Back to Top</button>-->
-
-
-
-<script type="module">
-
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, addDoc, doc, getDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
-    
-    
-    const firebaseConfig = {
-        apiKey: "AIzaSyDxvabrO3eNRTm37fE7G7sxckZBJrrnpHQ",
-        authDomain: "mycookbook-ee7d2.firebaseapp.com",
-        projectId: "mycookbook-ee7d2",
-        storageBucket: "mycookbook-ee7d2.appspot.com",
-        messagingSenderId: "49507480622",
-        appId: "1:49507480622:web:679369b3d9568dc15adbbf",
-        measurementId: "G-1MXN7NP98K"
-    };
-
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const storage = getStorage(app);
-
-    document.getElementById('uploadRecipeButton').addEventListener('click', addRecipe);
-    document.getElementById('cancleUploadRecipeButton').addEventListener('click', hideAddRecipesDiv);
-    document.getElementById('searchButton').addEventListener('click', () => fetchRecipes(document.getElementById('searchInput').value.trim()));
-    document.getElementById('addRecipeBtn').addEventListener('click', showAddRecipesDiv);
-
-async function fetchRecipes(searchTerm = "") {
-    const recipesCollectionRef = collection(db, 'recipes');
-    const snapshot = await getDocs(recipesCollectionRef);
-    const recipesContainer = document.getElementById('recipeList');
-    recipesContainer.innerHTML = '';
-    
-    snapshot.forEach(doc => {
-        const recipe = doc.data();
-        if (!searchTerm || recipe.title.toLowerCase().includes(searchTerm.toLowerCase())) {
-            const recipeElement = document.createElement('div');
-            recipeElement.classList.add('recipe');
-			
-            let ratingHtml = `<h3>Bewertung: </h3> <p>${recipe.rating ? recipe.rating : 'Nicht bewertet'}</p>`;	
-            let ingredientsHtml = '<ul>';
-            if (recipe.ingredients) {
-                recipe.ingredients.forEach(ingredient => {
-                    ingredientsHtml += `<li>${ingredient.menge} ${ingredient.einheit} - ${ingredient.zutat}</li>`;
-                });
-            }
-            ingredientsHtml += '</ul>';
-            recipeElement.innerHTML = `
-                <h2>${recipe.title}</h2>
-                <img src="${recipe.imageUrl || ''}" alt="Recipe image" >
-				<h3>Benötigte Zutaten für ${recipe.title} für ${recipe.nr} Personen</h3>
-                ${ingredientsHtml}
-				<h3>Beschreibung</h3>
-                <p>${recipe.description}</p>
-				<h3>Zeitaufwand</h3><p>Kochzeit: ${recipe.time}, Gesamtzeit: ${recipe.timeTotal}</p>
-				 ${ratingHtml}				 
-                <button class="editButton" data-id="${doc.id}">Edit</button>
-            `;
-			
-				const deleteButton = document.createElement('button');
-				deleteButton.id = 'deleteButton';
-                deleteButton.textContent = 'Rezept löschen';
-                deleteButton.onclick = () => deleteRecipe(doc.id);
-                recipeElement.appendChild(deleteButton);
-
-				recipesContainer.appendChild(recipeElement);
-        }
-    });
-
-    document.querySelectorAll('.editButton').forEach(button => {
-        button.addEventListener('click', function() {
-            showEditForm(this.getAttribute('data-id'));
-        });
-    });
-}
-
-  async function deleteRecipe(docId) {
-        if (confirm('Rezept wirklich endgültig löschen?')) {
-            await deleteDoc(doc(db, "recipes", docId));
-            alert('Rezept erfolgreich gelöscht.');
-            fetchRecipes(); // Refresh the list after deletion
-        }
-    }
-
-async function showEditForm(docId) {
-    const docRef = doc(db, "recipes", docId);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-        const recipe = docSnap.data();
-        document.getElementById('editRecipeId').value = docId;
-        document.getElementById('editRecipeTitle').value = recipe.title;
-        document.getElementById('editRecipeDescription').value = recipe.description;
-        document.getElementById('editRecipeTime').value = recipe.time;
-        document.getElementById('editRecipeTimeTotal').value = recipe.timeTotal;
-        // Populate rating if available
-        if (document.getElementById('editRecipeRating')) {
-            document.getElementById('editRecipeRating').value = recipe.rating || '';
-        }
-		// Populate nr if available
-		if (document.getElementById('editRecipeNr')) {
-            document.getElementById('editRecipeNr').value = recipe.nr || '';
-        }
-        // Clear existing ingredients
-        const editIngredientsList = document.getElementById('editIngredientsList');
-        editIngredientsList.innerHTML = ''; // Clear the list
-        // Populate ingredients
-        recipe.ingredients.forEach(ingredient => addEditIngredient(ingredient));
-        // Handle image preview if needed...
-
-        document.getElementById('editForm').style.display = 'block';
-		document.getElementById('editForm').scrollIntoView();
-    } else {
-        console.error("Document does not exist!");
-    }	
-}
-
-
-
-
-// add new ingredient	
-document.getElementById('addIngredientButton').addEventListener('click', addIngredientField);
-document.addEventListener('click', function(e) {
-    if (e.target && e.target.classList.contains('removeIngredient') && ingredientsNodes.length > 0) {
-        e.target.parentNode.remove();
-        }
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize the first ingredient field on page load
-    addIngredientField();
-    document.getElementById('addIngredientButton').addEventListener('click', addIngredientField);
-    document.getElementById('uploadRecipeButton').addEventListener('click', addRecipe);
-    // Additional initialization code as needed
-});
-
-// add new ingredient on edit
-document.getElementById('addEditIngredientButton').addEventListener('click', addEditIngredientField);
-document.addEventListener('click', function(e) {
-    if (e.target && e.target.classList.contains('removeIngredient') && ingredientsNodes.length > 0) {
-        e.target.parentNode.remove();
-        }
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize the first ingredient field on page load
-    addEditIngredientField();
-    document.getElementById('addEditIngredientButton').addEventListener('click', addEditIngredientField);
-    document.getElementById('updateRecipeButton').addEventListener('click', updateRecipe);
-    // Additional initialization code as needed
-});
-
-function addIngredientField() {
-    const ingredientsList = document.getElementById('ingredientsList');
-    const newIngredient = document.getElementById('ingredientTemplate').cloneNode(true);
-    newIngredient.style.display = 'flex'; // Make it visible
-    // Ensure the cloned node is not the template anymore
-    newIngredient.classList.remove('ingredient-template');
-    newIngredient.id = '';
-    ingredientsList.appendChild(newIngredient);
-}
-
-function addEditIngredientField() {
-    const editIngredientsList = document.getElementById('editIngredientsList');
-    const newIngredient = document.getElementById('ingredientTemplate').cloneNode(true);
-    newIngredient.style.display = 'flex'; // Make it visible
-    // Ensure the cloned node is not the template anymore
-    newIngredient.classList.remove('ingredient-template');
-    newIngredient.id = '';
-    editIngredientsList.appendChild(newIngredient);
-}
-
-async function addRecipe() {
-    const title = document.getElementById('newRecipeTitle').value.trim();
-    const description = document.getElementById('newRecipeDescription').value.trim();
-    const time = document.getElementById('newRecipeTime').value.trim();
-    const timeTotal = document.getElementById('newRecipeTimeTotal').value.trim();
-    const imageFile = document.getElementById('newRecipeImage').files[0]; // Get the file from the input
-    const ingredientsNodes = document.querySelectorAll('.ingredient:not(#ingredientTemplate)');
-    const ingredients = Array.from(ingredientsNodes).map(node => ({
-        menge: node.querySelector('.ingredient-quantity').value,
-        einheit: node.querySelector('.ingredient-unit').value,
-        zutat: node.querySelector('.ingredient-name').value
-    })).filter(ingredient => ingredient.menge && ingredient.einheit && ingredient.zutat);
-	const rating = document.getElementById('newRecipeRating').value;
-	const nr = document.getElementById('newRecipeNr').value;
-
-    if (title && description && ingredients.length > 0 && imageFile && rating && time && timeTotal && nr) {
-        try {
-            // Upload the image to Firebase Storage
-            const imageRef = ref(storage, `recipeImages/${imageFile.name}_${Date.now()}`);
-            const uploadResult = await uploadBytes(imageRef, imageFile);
-            const imageUrl = await getDownloadURL(uploadResult.ref);
-
-            // Store the recipe data along with the image URL in Firestore
-            await addDoc(collection(db, "recipes"), {
-                title,
-                description,
-                ingredients,
-                imageUrl, // Store the image URL instead of the local file path
-				time,
-				timeTotal,
-				nr,
-				rating
-            });
-
-            alert('Rezept erfolgreich hinzugrfügt!');
-            document.getElementById('newRecipeTitle').value = '';
-            document.getElementById('newRecipeDescription').value = '';
-            document.getElementById('newRecipeImage').value = ''; // Clear the file input
-            document.getElementById('newRecipeTimeTotal').value = '';
-            document.getElementById('newRecipeTime').value = '';
-            document.getElementById('newRecipeRating').value = '';
-            document.getElementById('newRecipeNr').value = '';
-            resetIngredientsList();
-        } catch (error) {
-            console.error("Error adding recipe: ", error);
-            alert('Fehler beim Hinzufügen des Rezepts.');
-        }
-    } else {
-        alert('Titel, Beschreibung, Bild, und mindistens eine Zutat müssen hinzugefügt werden.');
-    }
-    // Optionally reload the page or fetch recipes again to show the new addition
-    fetchRecipes();
-	hideAddRecipesDiv();
-}
-
-
-function resetIngredientsList() {
-    // Clear existing ingredients
-    document.querySelectorAll('.ingredient:not(#ingredientTemplate)').forEach(el => el.remove());
-    // Add a new ingredient field for the next recipe
-    addIngredientField();
-}
-
-document.addEventListener('click', function(e) {
-    if (e.target && e.target.classList.contains('removeIngredient')) {
-        // Get all the ingredient nodes excluding the template
-        const ingredientsNodes = document.querySelectorAll('.ingredient:not(#ingredientTemplate)');
-        
-        // Only allow removal if there are more than one ingredient elements
-        if (ingredientsNodes.length > 0) {
-            e.target.parentNode.remove();
-        } else {
-            alert('Mindestens eine Zutat wird benötigt.');
-			addIngredientField();
-        }
-    }
-});
-
-
-// Image Upload Preview
-document.getElementById('newRecipeImage').addEventListener('change', function() {
-    const file = this.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const previewImage = document.getElementById('uploadPreviewImage');
-            previewImage.src = e.target.result;
-            previewImage.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-    }
-});
-
-fetchRecipes();
-
-
-// When the user scrolls down 20px from the top of the document, show the button
-/*
-window.onscroll = function() {scrollFunction()};
-
-function scrollFunction() {
-    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-        document.getElementById("backToTopBtn").style.display = "block";
-    } else {
-        document.getElementById("backToTopBtn").style.display = "none";
-    }
-}*/
-
-// When the user clicks on the button, scroll to the top of the document
-/*
-document.getElementById("backToTopBtn").addEventListener("click", function() {
-    window.scrollTo({top: 0, behavior: 'smooth'});
-});
-*/		
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Existing code for initialization...
-    fetchRecipes();
-    setupEventListeners();
-});
-
-function setupEventListeners() {
-    document.getElementById('uploadRecipeButton').addEventListener('click', addRecipe);
-    document.getElementById('searchButton').addEventListener('click', () => fetchRecipes(document.getElementById('searchInput').value.trim()));
-    document.getElementById('updateRecipeButton').addEventListener('click', updateRecipe);
-    // Add more listeners as required...
-}
-
-
-
-function addEditIngredient(ingredient) {
-    const ingredientsList = document.getElementById('editIngredientsList');
-    const ingredientDiv = document.createElement('div');
-    ingredientDiv.classList.add('ingredient');
-    ingredientDiv.innerHTML = `
-        <input type="number" placeholder="Menge" class="ingredient-quantity form-control" value="${ingredient.menge || ''}">
-        <!--<input type="text" placeholder="Einheit" class="ingredient-unit form-control" value="${ingredient.einheit || ''}">-->
-		<select id="editIngredientUnit" class="ingredient-unit" value="${ingredient.einheit || ''}">
-				<option value="${ingredient.einheit || ''}">${ingredient.einheit || ''}</option>
-				<option value="tl">tl</option>
-				<option value="el">el</option>
-				<option value="gr">gr</option>
-				<option value="kg">kg</option>
-				<option value="ml">ml</option>
-				<option value="L">L</option>
-				<option value="stk">stk</option>
-			</select>	
-        <input type="text" placeholder="Zutat" class="ingredient-name form-control" value="${ingredient.zutat || ''}">
-        <button type="button" class="removeIngredient">X</button>
-    `;
-    ingredientsList.appendChild(ingredientDiv);
-}
-
-async function updateRecipe() {
-    const docId = document.getElementById('editRecipeId').value;
-    const title = document.getElementById('editRecipeTitle').value.trim();
-    const description = document.getElementById('editRecipeDescription').value.trim();
-    const time = document.getElementById('editRecipeTime').value.trim();
-    const timeTotal = document.getElementById('editRecipeTimeTotal').value.trim();
-    const rating = document.getElementById('editRecipeRating').value;
-    const nr = document.getElementById('editRecipeNr').value;
-    const imageFile = document.getElementById('editRecipeImage').files[0]; // Check if there's a new image file
-
-    // Collecting ingredients from dynamically added fields
-    const ingredientsElements = document.querySelectorAll('#editIngredientsList .ingredient');
-    const ingredients = Array.from(ingredientsElements).map(el => ({
-        menge: el.querySelector('.ingredient-quantity').value.trim(),
-        einheit: el.querySelector('.ingredient-unit').value.trim(),
-        zutat: el.querySelector('.ingredient-name').value.trim()
-    })).filter(ingredient => ingredient.menge && ingredient.einheit && ingredient.zutat);
-
-    let imageUrl;
-    // Handle image update
-    if (imageFile) {
-        // Upload the new image to Firebase Storage
-        const imageRef = ref(storage, `recipeImages/${imageFile.name}_${Date.now()}`);
-        const uploadResult = await uploadBytes(imageRef, imageFile);
-        imageUrl = await getDownloadURL(uploadResult.ref); // Get URL of uploaded image
-    }
-
-    const recipeData = { title, description, ingredients, rating, time, timeTotal, nr };
-    if (imageUrl) {
-        recipeData.imageUrl = imageUrl; // Add new image URL to recipe data if image was updated
-    }
-
-    if (title && description && ingredients.length > 0 && time && timeTotal) {
-        try {
-            await updateDoc(doc(db, "recipes", docId), recipeData);
-            alert('Rezept erfolgreich aktualisiert!');
-            document.getElementById('editForm').style.display = 'none'; // Optionally hide the edit form
-            fetchRecipes(); // Optionally refresh the list of recipes
-        } catch (error) {
-            console.error("Error updating recipe: ", error);
-            alert('Fehler beim Aktualisieren des Rezepts.');
-        }
-    } else {
-        alert('Titel, Beschreibung und mindestens eine Zutat sind erforderlich.');
-    }
-}
-
-// Attach the event listener to the "Update Recipe" button
-document.getElementById('updateRecipeButton').addEventListener('click', updateRecipe);
-
-async function showAddRecipesDiv() {
-   document.getElementById('addRecipeSection').style.display = "block";
-}
-
-async function hideAddRecipesDiv() {
-   document.getElementById('addRecipeSection').style.display = "none";
-}
-
-</script>
 
 </body>
 </html>
