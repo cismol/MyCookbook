@@ -223,12 +223,16 @@ async function addGin() {
 				addon
             });
 
-            alert('Gin erfolgreich hinzugrfügt!');
+            alert('Gin erfolgreich hinzugefügt!');
             document.getElementById('newGinTitle').value = '';
             document.getElementById('newGinDescription').value = '';
             document.getElementById('newGinImage').value = ''; // Clear the file input
             document.getElementById('newGinRating').value = '';
             document.getElementById('newGinTonic').value = '';
+            document.getElementById('newGinImage').value = '';
+			document.getElementById('newGinAddon').value = '';
+			document.getElementById('uploadPreviewImage').value = '';
+			
         } catch (error) {
             console.error("Error adding gin: ", error);
             alert('Fehler beim Hinzufügen des Rezepts.');
