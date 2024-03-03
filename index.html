@@ -178,7 +178,7 @@ async function fetchRecipes(searchTerm = "") {
             ingredientsHtml += '</ul>';
             recipeElement.innerHTML = `
                 <h2>${recipe.title}</h2>
-                <img src="${recipe.imageUrl || ''}" alt="Recipe image" style="max-width: 100%; height: auto;">
+                <img src="${recipe.imageUrl || ''}" alt="Recipe image" >
 				<h3>Benötigte Zutaten für ${recipe.title} für ${recipe.nr} Personen</h3>
                 ${ingredientsHtml}
 				<h3>Beschreibung</h3>
@@ -448,7 +448,7 @@ function addEditIngredient(ingredient) {
 				<option value="stk">stk</option>
 			</select>	
         <input type="text" placeholder="Zutat" class="ingredient-name form-control" value="${ingredient.zutat || ''}">
-        <button type="button" class="removeIngredient">Remove</button>
+        <button type="button" class="removeIngredient">X</button>
     `;
     ingredientsList.appendChild(ingredientDiv);
 }

@@ -63,7 +63,7 @@ textarea {
 	padding-bottom: 15px;
 }
 
-button, input::file-selector-button, #newRecipeRating, #editRecipeRating, #newRecipeNr, #editRecipeNr {
+button, input::file-selector-button, #newRecipeRating, #editRecipeRating, #newRecipeNr, #editRecipeNr, #newGinTonic, #newGinRating, #editGinRating, #newGinNr, #editGinNr {
     border: none;
     background-color: #58af9b;
     color: #ffffff;
@@ -75,11 +75,11 @@ button, input::file-selector-button, #newRecipeRating, #editRecipeRating, #newRe
     font-size: 16px;
 }
 
-.removeIngredient, #deleteButton, #cancleUploadRecipeButton {
+.removeIngredient, #deleteButton, #cancleUploadGinButton {
 	background-color: #A1142E;
 }
 
-.recipe button:hover {
+.recipe button:hover, .gin  button:hover {
     background-color: #45a085;
 }
 
@@ -106,13 +106,13 @@ button, input::file-selector-button, #newRecipeRating, #editRecipeRating, #newRe
     border-radius: 4px;
 }
 
-#recipeList {
+#recipeList, #ginList {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.recipe {
+.recipe, .gin {
     background-color: #ffffff;
     border: 1px solid #ddd;
     margin-bottom: 20px;
@@ -123,22 +123,22 @@ button, input::file-selector-button, #newRecipeRating, #editRecipeRating, #newRe
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
-.recipe img {
-    max-width: 100%;
+.recipe img, .gin img {
+    max-width: 50%;
     height: auto;
     border-radius: 8px;
 }
 
-.recipe h2 {
+.recipe h2, .gin h2 {
     color: #35424a;
     margin-bottom: 10px;
 }
 
-.recipe p {
+.recipe p, .gin p {
     margin-bottom: 15px;
 }
 
-.recipe ul {
+.recipe ul, .gin ul{
     margin-bottom: 15px;
 	margin-left: 15px;
 }
@@ -147,7 +147,7 @@ button, input::file-selector-button, #newRecipeRating, #editRecipeRating, #newRe
     margin-top: 10px;
 }
 
-#showAddRecipeFormButton {
+#showAddRecipeFormButton, #showAddGinFormButton {
     display: block;
     width: 200px;
     margin: 20px auto;
@@ -159,7 +159,7 @@ button, input::file-selector-button, #newRecipeRating, #editRecipeRating, #newRe
     cursor: pointer;
 }
 
-#showAddRecipeFormButton:hover {
+#showAddRecipeFormButton:hover, #showAddGinFormButton:hover {
     background-color: #2c3e50;
 }
 

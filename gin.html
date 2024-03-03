@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Gin Book</title>
+    <link rel="stylesheet" type="text/css" href="style/style.css">
+</head>
+<body>
+<header>
+    <h1>My Cookbook</h1>
+    <div class="search-bar">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search gins...">
+		<button id="searchButton">Search</button>	
+    </div>
+	<button id="addGinBtn" >Gin hinzufügen</button>
+    <nav>
+        <a href="#">Home</a>
+        <a href="#">Gins</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+    </nav>
+</header>
+
+<div class="upload-form" id="addGinSection" style="display:none;">
+    <h2>Neuer Gin hinzufügen</h2>
+    <input type="text" id="newGinTitle" placeholder="Titel" class="inputTitle">
+	</br>
+    <textarea id="newGinDescription" placeholder="Beschreibung"></textarea>
+    <select id="newGinRating">
+        <option value="">Bewertung auswählen</option>
+        <option value="1 - schlecht">1 - schlecht</option>
+        <option value="2 - ok">2 - ok</option>
+        <option value="3 - gut">3 - gut</option>
+        <option value="4 - sehr gut">4 - sehr gut</option>
+        <option value="5 - excelent">5 - excelent</option>
+    </select>	
+	<select id="newGinTonic">
+        <option value="">Tonic auswählen</option>
+        <option value="Fever Tree Gelb">Fever Tree Gelb</option>
+        <option value="Fever Tree Blau">Fever Tree Blau</option>
+        <option value="Fever Tree Pink">Fever Tree Pink</option>
+        <option value="Gents">Gents</option>
+        <option value="Tomas Henry">Tomas Henry</option>
+        <option value="Anderes">Anderes - siehe beschreibung</option>
+    </select>
+	<input type="text" id="newGinAddon" placeholder="Addon" class="inputTitle">
+    <input type="file" id="newGinImage" accept="image/*" placeholder="Image" class="searchInput">
+	</br>
+	<img id="uploadPreviewImage" src="" alt="Preview" style="max-width: 100px; display: none;"/>
+    <button id="uploadGinButton">Upload Gin</button>
+    <button id="cancleUploadGinButton">Abbrechen</button>
+</div>
+
+<div id="ginList"></div>
+
+<div class="edit-form" id="editForm" style="display: none;">
+    <h2>Edit</h2>
+    <input type="hidden" id="editGinId">
+    <input type="text" id="editGinTitle" placeholder="Titel" class="inputTitle">
+    </br>
+    <textarea id="editGinDescription" placeholder="Beschreibung" class="inputTitle"></textarea>
+
+    <select id="editGinRating" class="form-control">
+        <option value="">Bewertung auswählen</option>
+        <option value="1 - schlecht">1 - schlecht</option>
+        <option value="2 - ok">2 - ok</option>
+        <option value="3 - gut">3 - gut</option>
+        <option value="4 - sehr gut">4 - sehr gut</option>
+        <option value="5 - excellent">5 - excellent</option>
+    </select>	
+	<select id="editGinTonic">
+        <option value="">Tonic auswählen</option>
+        <option value="Fever Tree Gelb">Fever Tree Gelb</option>
+        <option value="Fever Tree Blau">Fever Tree Blau</option>
+        <option value="Fever Tree Pink">Fever Tree Pink</option>
+        <option value="Gents">Gents</option>
+        <option value="Tomas Henry">Tomas Henry</option>
+        <option value="Anderes">Anderes - siehe beschreibung</option>
+    </select>
+	<input type="text" id="editGinAddon" placeholder="Addon" class="inputTitle">
+	<label for="editGinImage">Gin Image:</label>
+    <input type="file" id="editGinImage" accept="image/*" class="form-control">
+    <img id="editPreviewImage" src="" alt="Preview" style="max-width: 100px; display: none;"/>
+    
+    <button type="button" id="updateGinButton" class="btn-update">Update Gin</button>
+</div>
+
+<script type="module">
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, addDoc, doc, getDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+    
+    
+    const firebaseConfig = {
+        apiKey: "AIzaSyDxvabrO3eNRTm37fE7G7sxckZBJrrnpHQ",
+        authDomain: "mycookbook-ee7d2.firebaseapp.com",
+        projectId: "mycookbook-ee7d2",
+        storageBucket: "mycookbook-ee7d2.appspot.com",
+        messagingSenderId: "49507480622",
+        appId: "1:49507480622:web:679369b3d9568dc15adbbf",
+        measurementId: "G-1MXN7NP98K"
+    };
+
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    document.getElementById('uploadGinButton').addEventListener('click', addGin);
+    document.getElementById('cancleUploadGinButton').addEventListener('click', hideAddGinsDiv);
+    document.getElementById('searchButton').addEventListener('click', () => fetchGins(document.getElementById('searchInput').value.trim()));
+    document.getElementById('addGinBtn').addEventListener('click', showAddGinsDiv);
+
+async function fetchGins(searchTerm = "") {
+    const ginsCollectionRef = collection(db, 'gins');
+    const snapshot = await getDocs(ginsCollectionRef);
+    const ginsContainer = document.getElementById('ginList');
+    ginsContainer.innerHTML = '';
+    
+    snapshot.forEach(doc => {
+        const gin = doc.data();
+        if (!searchTerm || gin.title.toLowerCase().includes(searchTerm.toLowerCase())) {
+            const ginElement = document.createElement('div');
+            ginElement.classList.add('gin');
+			
+            let ratingHtml = `<h3>Bewertung: </h3><p>${gin.rating ? gin.rating : 'Nicht bewertet'}</p>`;	
+            ginElement.innerHTML = `
+                <h2>${gin.title}</h2>
+                <img src="${gin.imageUrl || ''}" alt="Gin image" >
+				<h3>Beschreibung</h3>
+                <p>${gin.description}</p>
+				<h3>Addon</h3><p>${gin.addon}</p>
+				<h3>Tonic:</h3><p>${gin.tonic}</p>
+				 ${ratingHtml}				 
+                <button class="editButton" data-id="${doc.id}">Edit</button>
+            `;
+			
+				const deleteButton = document.createElement('button');
+				deleteButton.id = 'deleteButton';
+                deleteButton.textContent = 'Gin löschen';
+                deleteButton.onclick = () => deleteGin(doc.id);
+                ginElement.appendChild(deleteButton);
+
+				ginsContainer.appendChild(ginElement);
+        }
+    });
+
+    document.querySelectorAll('.editButton').forEach(button => {
+        button.addEventListener('click', function() {
+            showEditForm(this.getAttribute('data-id'));
+        });
+    });
+}
+
+  async function deleteGin(docId) {
+        if (confirm('Gin wirklich endgültig löschen?')) {
+            await deleteDoc(doc(db, "gins", docId));
+            alert('Gin erfolgreich gelöscht.');
+            fetchGins(); // Refresh the list after deletion
+        }
+    }
+
+async function showEditForm(docId) {
+    const docRef = doc(db, "gins", docId);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+        const gin = docSnap.data();
+        document.getElementById('editGinId').value = docId;
+        document.getElementById('editGinTitle').value = gin.title;
+        document.getElementById('editGinAddon').value = gin.addon;
+        document.getElementById('editGinDescription').value = gin.description;
+        // Populate rating if available
+        if (document.getElementById('editGinRating')) {
+            document.getElementById('editGinRating').value = gin.rating || '';
+        }
+		// Populate nr if available
+		if (document.getElementById('editGinTonic')) {
+            document.getElementById('editGinTonic').value = gin.tonic || '';
+        }
+
+        document.getElementById('editForm').style.display = 'block';
+		document.getElementById('editForm').scrollIntoView();
+    } else {
+        console.error("Document does not exist!");
+    }	
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize the first ingredient field on page load
+    document.getElementById('uploadGinButton').addEventListener('click', addGin);
+    // Additional initialization code as needed
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('updateGinButton').addEventListener('click', updateGin);
+    // Additional initialization code as needed
+});
+
+async function addGin() {
+    const title = document.getElementById('newGinTitle').value.trim();
+    const addon = document.getElementById('newGinAddon').value.trim();
+    const description = document.getElementById('newGinDescription').value.trim();
+    const imageFile = document.getElementById('newGinImage').files[0]; // Get the file from the input
+	const rating = document.getElementById('newGinRating').value;
+	const tonic = document.getElementById('newGinTonic').value;
+
+    if (title && description && imageFile && rating && tonic && addon) {
+        try {
+            // Upload the image to Firebase Storage
+            const imageRef = ref(storage, `ginImages/${imageFile.name}_${Date.now()}`);
+            const uploadResult = await uploadBytes(imageRef, imageFile);
+            const imageUrl = await getDownloadURL(uploadResult.ref);
+
+            // Store the gin data along with the image URL in Firestore
+            await addDoc(collection(db, "gins"), {
+                title,
+                description,
+                imageUrl, // Store the image URL instead of the local file path
+				tonic,
+				rating,
+				addon
+            });
+
+            alert('Gin erfolgreich hinzugrfügt!');
+            document.getElementById('newGinTitle').value = '';
+            document.getElementById('newGinDescription').value = '';
+            document.getElementById('newGinImage').value = ''; // Clear the file input
+            document.getElementById('newGinRating').value = '';
+            document.getElementById('newGinTonic').value = '';
+        } catch (error) {
+            console.error("Error adding gin: ", error);
+            alert('Fehler beim Hinzufügen des Rezepts.');
+        }
+    } else {
+        alert('Titel, Beschreibung, Bild, Rating und Tonic müssen hinzugefügt werden.');
+    }
+    // Optionally reload the page or fetch gins again to show the new addition
+    fetchGins();
+	hideAddGinsDiv();
+}
+
+/*
+function resetIngredientsList() {
+    document.querySelectorAll('.ingredient:not(#ingredientTemplate)').forEach(el => el.remove());
+    addIngredientField();
+}
+
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.classList.contains('removeIngredient')) {
+        const ingredientsNodes = document.querySelectorAll('.ingredient:not(#ingredientTemplate)');
+        
+        if (ingredientsNodes.length > 0) {
+            e.target.parentNode.remove();
+        } else {
+            alert('Mindestens eine Zutat wird benötigt.');
+			addIngredientField();
+        }
+    }
+}); */
+
+
+// Image Upload Preview
+document.getElementById('newGinImage').addEventListener('change', function() {
+    const file = this.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const previewImage = document.getElementById('uploadPreviewImage');
+            previewImage.src = e.target.result;
+            previewImage.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+fetchGins();
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Existing code for initialization...
+    fetchGins();
+    setupEventListeners();
+});
+
+function setupEventListeners() {
+    document.getElementById('uploadGinButton').addEventListener('click', addGin);
+    document.getElementById('searchButton').addEventListener('click', () => fetchGins(document.getElementById('searchInput').value.trim()));
+    document.getElementById('updateGinButton').addEventListener('click', updateGin);
+    // Add more listeners as required...
+}
+
+
+
+async function updateGin() {
+    const docId = document.getElementById('editGinId').value;
+    const title = document.getElementById('editGinTitle').value.trim();
+    const addon = document.getElementById('editGinAddon').value.trim();
+    const description = document.getElementById('editGinDescription').value.trim();
+    const rating = document.getElementById('editGinRating').value;
+    const tonic = document.getElementById('editGinTonic').value;
+    const imageFile = document.getElementById('editGinImage').files[0]; // Check if there's a new image file
+
+    // Collecting ingredients from dynamically added fields
+  /*  const ingredientsElements = document.querySelectorAll('#editIngredientsList .ingredient');
+    const ingredients = Array.from(ingredientsElements).map(el => ({
+        menge: el.querySelector('.ingredient-quantity').value.trim(),
+        einheit: el.querySelector('.ingredient-unit').value.trim(),
+        zutat: el.querySelector('.ingredient-name').value.trim()
+    })).filter(ingredient => ingredient.menge && ingredient.einheit && ingredient.zutat);*/
+
+    let imageUrl;
+    // Handle image update
+    if (imageFile) {
+        // Upload the new image to Firebase Storage
+        const imageRef = ref(storage, `ginImages/${imageFile.name}_${Date.now()}`);
+        const uploadResult = await uploadBytes(imageRef, imageFile);
+        imageUrl = await getDownloadURL(uploadResult.ref); // Get URL of uploaded image
+    }
+
+    const ginData = { title, description, rating, tonic, addon };
+    if (imageUrl) {
+        ginData.imageUrl = imageUrl; // Add new image URL to gin data if image was updated
+    }
+
+    if (title && description) {
+        try {
+            await updateDoc(doc(db, "gins", docId), ginData);
+            alert('Gin erfolgreich aktualisiert!');
+            document.getElementById('editForm').style.display = 'none'; // Optionally hide the edit form
+            fetchGins(); // Optionally refresh the list of gins
+        } catch (error) {
+            console.error("Error updating gin: ", error);
+            alert('Fehler beim Aktualisieren des Rezepts.');
+        }
+    } else {
+        alert('Mindestens Titel und Beschreibung sind erforderlich.');
+    }
+}
+
+// Attach the event listener to the "Update Gin" button
+document.getElementById('updateGinButton').addEventListener('click', updateGin);
+
+async function showAddGinsDiv() {
+   document.getElementById('addGinSection').style.display = "block";
+}
+
+async function hideAddGinsDiv() {
+   document.getElementById('addGinSection').style.display = "none";
+}
+
+</script>
+
+</body>
+</html>
