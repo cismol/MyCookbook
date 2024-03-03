@@ -63,7 +63,7 @@ textarea {
 	padding-bottom: 15px;
 }
 
-button, input::file-selector-button, #newRecipeRating, #editRecipeRating, #newRecipeNr, #editRecipeNr, #newGinTonic, #newGinRating, #editGinRating, #newGinNr, #editGinNr {
+button, input::file-selector-button, #newRecipeRating, #editRecipeRating, #newRecipeNr, #editRecipeNr, #newGinTonic, #newGinRating, #editGinRating, #newGinNr, #editGinNr, .searchFor {
     border: none;
     background-color: #58af9b;
     color: #ffffff;
@@ -83,7 +83,7 @@ button, input::file-selector-button, #newRecipeRating, #editRecipeRating, #newRe
     background-color: #45a085;
 }
 
-.upload-form, .edit-form {
+.upload-form, .edit-form, .index-form {
     background-color: #ffffff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     margin: 20px auto;
