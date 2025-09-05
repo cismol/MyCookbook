@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Panzerzug - Personalplanung</title>
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#9fb8ff;--muted:#98a2b3;--success:#7ee787}
+    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial}
+    body{background:linear-gradient(180deg,#041028 0%, #071428 100%);color:#e6eef8;padding:20px}
+    .container{max-width:1100px;margin:0 auto}
+    h1{margin:0 0 8px;font-size:20px}
+    .grid{display:grid;grid-template-columns:360px 1fr;gap:18px}
+    .card{background:var(--card);padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(3,9,23,.6)}
+    label{display:block;font-size:13px;margin-bottom:6px;color:var(--muted)}
+    input[type=text],select,input[type=number]{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit}
+    button{background:linear-gradient(180deg,var(--accent),#6f97ff);border:none;color:#05203b;padding:8px 10px;border-radius:10px;font-weight:600;cursor:pointer}
+    .small{font-size:13px;padding:6px 8px;border-radius:8px}
+    .list{max-height:360px;overflow:auto;margin-top:10px}
+    .row{display:flex;gap:8px;align-items:center}
+    .person{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;background:rgba(255,255,255,0.02);margin-bottom:8px}
+    .badge{font-size:12px;padding:6px 8px;border-radius:999px;background:rgba(255,255,255,0.03)}
+    .controls{display:flex;gap:8px;margin-top:10px}
+    .plan{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+    .tank{padding:10px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);}
+    .tank h3{margin:0 0 8px;font-size:15px}
+    .slot{display:flex;justify-content:space-between;padding:6px;border-radius:8px;background:rgba(255,255,255,0.01);margin-bottom:6px}
+    .warn{color:#ffd2a8}
+    .success{color:var(--success)}
+    .footer{margin-top:12px;color:var(--muted);font-size:13px}
+    .compact{font-size:13px}
+    .fixed-flag{font-size:12px;color:#ffd6e0}
+    .controls-right{margin-left:auto}
+    .flex{display:flex;align-items:center;gap:8px}
+    textarea{width:100%;height:120px;background:transparent;color:inherit;border-radius:8px;border:1px solid rgba(255,255,255,0.04);padding:8px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Panzerzug — automatische Personalplanung</h1>
+    <p class="compact">Pflege Personal, wähle Anzahl Panzer (UNO..QUATTRO), Det-Größen, fixe Einteilungen und erstelle automatisiert Pläne. Daten werden lokal gespeichert.</p>
+
+    <div class="grid">
+      <div class="card">
+        <h2 style="margin-top:0">Personalverwaltung</h2>
+        <label>Name</label>
+        <input id="name" type="text" placeholder="Vorname Nachname" />
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <select id="role">
+            <option value="RiLa">RiLa (Richter/Lader)</option>
+            <option value="Fhr">Fhr (Fahrer)</option>
+            <option value="WM">WM (Wachtmeister)</option>
+            <option value="LT">LT (Leutnant)</option>
+          </select>
+          <select id="status">
+            <option value="available">Verfügbar</option>
+            <option value="wache">Wache</option>
+            <option value="kueche">Küche</option>
+          </select>
+          <button id="add" class="small">hinzufügen</button>
+        </div>
+
+        <div class="list" id="peopleList"></div>
+
+        <div class="controls">
+          <button id="saveAll" class="small">Speichern</button>
+          <button id="exportBtn" class="small">Export JSON</button>
+          <button id="importBtn" class="small">Import</button>
+          <input id="importArea" placeholder="JSON hier einfügen" style="flex:1;background:transparent;border:1px dashed rgba(255,255,255,0.04);padding:6px;border-radius:8px;color:inherit" />
+        </div>
+
+        <p class="footer">Hinweis: Daten werden im Browser (localStorage) gespeichert. Fixe Einteilungen bleiben erhalten und werden bei automatischer Planung priorisiert.</p>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0">Plan-Einstellungen & Automatik</h2>
+        <div class="row">
+          <label style="flex:0 0 160px">Anzahl Panzer</label>
+          <input id="tankCount" type="number" min="0" max="4" value="2" style="width:80px" />
+          <div class="flex" style="margin-left:auto">
+            <label class="compact">Aufklärung (Größe)</label>
+            <input id="aufkSize" type="number" min="0" value="1" style="width:70px" />
+            <label class="compact">Absperr (Größe)</label>
+            <input id="absSize" type="number" min="0" value="1" style="width:70px" />
+          </div>
+        </div>
+
+        <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+          <button id="autoPlan">Automatisch planen</button>
+          <button id="clearPlan" class="small">Plan zurücksetzen</button>
+          <div style="margin-left:auto">
+            <label class="compact">Benutzerdef. Reihenfolge:</label>
+            <select id="priority">
+              <option value="availableFirst">Verfügbare zuerst</option>
+              <option value="fixedFirst">Fixe Einteilungen bevorzugen</option>
+            </select>
+          </div>
+        </div>
+
+        <h3 style="margin-top:12px">Letzter Plan</h3>
+        <div id="planArea"></div>
+
+        <h3 style="margin-top:12px">Übersicht unzugeteilter / Warnungen</h3>
+        <div id="leftovers"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+// --- Datenmodell & Persistenz ---
+const STORAGE_KEY = 'pz_personal_v1';
+let state = {
+  people: [], // {id,name,role,status,fixedTank:null}
+  tankCount: 2,
+  aufkSize: 1,
+  absSize: 1,
+  lastPlan: null
+};
+
+function saveState(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+function loadState(){const raw = localStorage.getItem(STORAGE_KEY); if(raw){try{state=JSON.parse(raw);}catch(e){console.error(e);} }}
+loadState();
+
+// --- Helpers ---
+function uid(){return Math.random().toString(36).slice(2,9)}
+function roleLabel(r){return r}
+
+// --- UI Bindings ---
+const peopleList = document.getElementById('peopleList');
+const nameIn = document.getElementById('name');
+const roleIn = document.getElementById('role');
+const statusIn = document.getElementById('status');
+const addBtn = document.getElementById('add');
+const saveBtn = document.getElementById('saveAll');
+const exportBtn = document.getElementById('exportBtn');
+const importBtn = document.getElementById('importBtn');
+const importArea = document.getElementById('importArea');
+const tankCountIn = document.getElementById('tankCount');
+const aufkIn = document.getElementById('aufkSize');
+const absIn = document.getElementById('absSize');
+const autoBtn = document.getElementById('autoPlan');
+const planArea = document.getElementById('planArea');
+const leftovers = document.getElementById('leftovers');
+const clearPlanBtn = document.getElementById('clearPlan');
+const prioritySel = document.getElementById('priority');
+
+// initialize inputs from state
+function refreshInputs(){
+  tankCountIn.value = state.tankCount;
+  aufkIn.value = state.aufkSize;
+  absIn.value = state.absSize;
+}
+
+function renderPeople(){peopleList.innerHTML='';
+  if(state.people.length===0){peopleList.innerHTML='<p class="compact">Keine Personen angelegt.</p>';return}
+  state.people.forEach(p=>{
+    const el = document.createElement('div'); el.className='person';
+    const left = document.createElement('div');
+    left.innerHTML = `<div style="font-weight:600">${p.name}</div><div class="compact">${p.role} • ${p.status}</div>`;
+    const right = document.createElement('div');
+    right.style.display='flex'; right.style.gap='8px'; right.style.alignItems='center';
+
+    const fixed = document.createElement('select');
+    fixed.innerHTML = '<option value="">nicht fix</option>' + Array.from({length:state.tankCount},(_,i)=>`<option value="${i+1}">Panzer ${i+1}</option>`).join('') + '<option value="aufk">Aufkl.</option><option value="abs">Abspr.</option>';
+    fixed.value = p.fixedTank||'';
+    fixed.onchange = ()=>{p.fixedTank = fixed.value||null; saveState(); renderPeople()}
+    right.appendChild(fixed);
+
+    const del = document.createElement('button'); del.textContent='✕'; del.title='Löschen'; del.onclick=()=>{state.people = state.people.filter(x=>x.id!==p.id); saveState(); renderPeople()}
+    right.appendChild(del);
+
+    el.appendChild(left); el.appendChild(right);
+    peopleList.appendChild(el);
+  })
+}
+
+addBtn.onclick = ()=>{
+  const name = nameIn.value.trim(); if(!name) return alert('Bitte Namen eingeben');
+  const role = roleIn.value; const status = statusIn.value;
+  state.people.push({id:uid(),name,role,status,fixedTank:null});
+  nameIn.value=''; saveState(); renderPeople();
+}
+
+saveBtn.onclick = ()=>{state.tankCount = Number(tankCountIn.value); state.aufkSize = Number(aufkIn.value); state.absSize = Number(absIn.value); saveState(); alert('Gespeichert')}
+exportBtn.onclick = ()=>{const data = JSON.stringify(state,null,2); importArea.value = data; alert('JSON im Feld unten eingefügt. Kopiere zum Export.')}
+importBtn.onclick = ()=>{try{const parsed = JSON.parse(importArea.value); state = parsed; saveState(); refreshInputs(); renderPeople(); renderPlan(state.lastPlan); alert('Import erfolgreich')}catch(e){alert('Ungültiges JSON') }}
+
+tankCountIn.onchange = ()=>{state.tankCount = Number(tankCountIn.value); saveState(); renderPeople()}
+aufkIn.onchange = ()=>{state.aufkSize = Number(aufkIn.value); saveState()}
+absIn.onchange = ()=>{state.absSize = Number(absIn.value); saveState()}
+
+clearPlanBtn.onclick = ()=>{state.lastPlan=null; saveState(); renderPlan(null); leftovers.innerHTML='';}
+
+// --- Planung ---
+function createEmptyPlan(tankCount){
+  const tanks = [];
+  const names = ['UNO','DUE','TRE','QUATTRO'];
+  for(let i=0;i<tankCount;i++){
+    const tname = names[i]||('P'+(i+1));
+    const slots = [];
+    if(i===0){ // UNO
+      slots.push({role:'LT',assigned:null});
+      slots.push({role:'RiLa',assigned:null});
+      slots.push({role:'RiLa',assigned:null});
+      slots.push({role:'Fhr',assigned:null});
+    } else {
+      slots.push({role:'WM',assigned:null});
+      slots.push({role:'RiLa',assigned:null});
+      slots.push({role:'RiLa',assigned:null});
+      slots.push({role:'Fhr',assigned:null});
+    }
+    tanks.push({name:tname,slots});
+  }
+  return {tanks,aufk:[],abs:[]}
+}
+
+function autoPlan(){
+  // gather pools
+  const availablePeople = state.people.slice();
+  // mark unavailable: those with status wache/kueche are excluded from tank assignments
+  const poolForTanks = availablePeople.filter(p=>p.status==='available');
+  const poolForDet = availablePeople.slice(); // can include any except fixed that already used
+
+  const plan = createEmptyPlan(state.tankCount);
+
+  // helper: find and assign fixeds first
+  function assignFixed(){
+    // for each person with fixedTank set, place accordingly if role matches
+    state.people.forEach(p=>{
+      if(!p.fixedTank) return;
+      if(p.fixedTank==='aufk'){ if(plan.aufk.length < state.aufkSize){ plan.aufk.push(p); } }
+      else if(p.fixedTank==='abs'){ if(plan.abs.length < state.absSize){ plan.abs.push(p); } }
+      else {
+        const idx = Number(p.fixedTank)-1; if(idx>=0 && idx<plan.tanks.length){ // find an empty slot matching role
+          const slots = plan.tanks[idx].slots;
+          // find slot with same role and unassigned; special: LT can fill LT, WM fills WM
+          const slot = slots.find(s=>s.role===p.role && !s.assigned);
+          if(slot) slot.assigned = p;
+        }
+      }
+    })
+  }
+
+  assignFixed();
+
+  // assign remaining for tanks by role needs
+  // create lookup of pools by role
+  const pools = {RiLa:[],Fhr:[],WM:[],LT:[]};
+  poolForTanks.forEach(p=>{ if(p.role in pools) pools[p.role].push(p); });
+
+  // also include WM or LT if someone has role LT but we need WM? No, roles must match. If missing WM, we can promote from others? We'll allow WM or LT to fill WM if necessary: LT or WM can fill WM. And WM can fill LT? Better: allow LT to fill WM, but WM cannot fill LT.
+  function takeFromPool(role){
+    if(pools[role] && pools[role].length>0) return pools[role].shift();
+    // fallback rules
+    if(role==='WM'){
+      if(pools['LT'] && pools['LT'].length>0) return pools['LT'].shift();
+    }
+    if(role==='LT'){
+      // prefer LT only
+      return null;
+    }
+    return null;
+  }
+
+  // fill slots
+  plan.tanks.forEach((tank,ti)=>{
+    tank.slots.forEach(slot=>{
+      if(slot.assigned) return; // already fixed
+      const needed = slot.role;
+      const pick = takeFromPool(needed);
+      if(pick){ slot.assigned = pick; // remove from poolForDet as well
+        const idx = poolForTanks.findIndex(x=>x.id===pick.id); if(idx>=0) poolForTanks.splice(idx,1);
+      }
+    })
+  })
+
+  // after filling tanks, assign remaining available people (including those with non-available status) to dets
+  // build remaining pool excluding those already assigned to tanks
+  const assignedIds = new Set(); plan.tanks.forEach(t=>t.slots.forEach(s=>{ if(s.assigned) assignedIds.add(s.assigned.id)}));
+  // include people who are not already assigned
+  const remaining = state.people.filter(p=>!assignedIds.has(p.id));
+
+  // prioritize fixed det assignments
+  state.people.forEach(p=>{ if(p.fixedTank==='aufk'){ if(!plan.aufk.find(x=>x && x.id===p.id) && plan.aufk.length < state.aufkSize) plan.aufk.push(p); }
+    if(p.fixedTank==='abs'){ if(!plan.abs.find(x=>x && x.id===p.id) && plan.abs.length < state.absSize) plan.abs.push(p); }
+  });
+
+  // fill aufk
+  for(let i=plan.aufk.length;i<state.aufkSize;i++){
+    const cand = remaining.shift(); if(!cand) break; plan.aufk.push(cand);
+  }
+  // fill abs
+  for(let i=plan.abs.length;i<state.absSize;i++){
+    const cand = remaining.shift(); if(!cand) break; plan.abs.push(cand);
+  }
+
+  // compute leftovers as whatever remains in remaining
+  const leftoversArr = remaining.slice();
+
+  state.lastPlan = plan; saveState(); renderPlan(plan); renderLeftovers(leftoversArr);
+}
+
+function renderPlan(plan){ planArea.innerHTML='';
+  if(!plan){ planArea.innerHTML='<p class="compact">Kein Plan vorhanden.</p>'; return }
+  const wrapper = document.createElement('div'); wrapper.className='plan';
+  plan.tanks.forEach((t,i)=>{
+    const box = document.createElement('div'); box.className='tank card';
+    box.innerHTML = `<h3>${t.name}</h3>`;
+    t.slots.forEach(s=>{
+      const div = document.createElement('div'); div.className='slot';
+      div.innerHTML = `<div>${s.role}</div><div>${s.assigned? `<strong>${s.assigned.name}</strong>`:'<span class="warn">frei</span>'}</div>`;
+      box.appendChild(div);
+    })
+    wrapper.appendChild(box);
+  });
+
+  // dets
+  const dbox = document.createElement('div'); dbox.className='tank card'; dbox.innerHTML = '<h3>Aufklärung</h3>' + (plan.aufk.map(p=>`<div class="slot"><div>Mitglied</div><div><strong>${p.name}</strong></div></div>`).join('') || '<div class="compact warn">leer</div>');
+  wrapper.appendChild(dbox);
+  const abox = document.createElement('div'); abox.className='tank card'; abox.innerHTML = '<h3>Absperr</h3>' + (plan.abs.map(p=>`<div class="slot"><div>Mitglied</div><div><strong>${p.name}</strong></div></div>`).join('') || '<div class="compact warn">leer</div>');
+  wrapper.appendChild(abox);
+
+  planArea.appendChild(wrapper);
+}
+
+function renderLeftovers(arr){ leftovers.innerHTML='';
+  if(arr.length===0){ leftovers.innerHTML='<div class="success">Alle Personen zugeteilt.</div>'; return }
+  arr.forEach(p=>{
+    const el = document.createElement('div'); el.className='person';
+    el.innerHTML = `<div><strong>${p.name}</strong><div class="compact">${p.role} • ${p.status} ${p.fixedTank? '• fix:'+p.fixedTank:''}</div></div><div class="badge">frei</div>`;
+    leftovers.appendChild(el);
+  })
+}
+
+// --- init ---
+refreshInputs(); renderPeople(); renderPlan(state.lastPlan);
+
+autoBtn.onclick = ()=>{autoPlan()};
+
+</script>
+</body>
+</html>

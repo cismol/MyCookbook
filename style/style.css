@@ -110,6 +110,7 @@ button, input::file-selector-button, #newRecipeRating, #editRecipeRating, #newRe
     display: flex;
     flex-direction: column;
     align-items: center;
+	padding-left: 10%;
 }
 
 .recipe, .gin {
@@ -197,3 +198,17 @@ button, input::file-selector-button, #newRecipeRating, #editRecipeRating, #newRe
     padding: 10px 20px;
     border-radius: 4px;
 }
+/*
+.gin {
+	min-width: 40%;
+	max-width: 40%;
+	margin-right: 2%;
+	margin-top: 2%;
+}
+
+#ginList {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+	padding-left: 10%;
+}*/
