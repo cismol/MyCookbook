@@ -9,7 +9,7 @@
 <body>
   <div class="container">
     <h1>Panzerzug — automatische Personalplanung</h1>
-    <p class="compact">Pflege Personal, wähle Anzahl Panzer (UNO..QUATTRO), Det-Größen, fixe Einteilungen und erstelle automatisiert Pläne. Daten werden lokal gespeichert.</p>
+    <p class="compact">Pflege Personal, wähle Anzahl Panzer (UNO..QUATTRO), Det-Grössen, fixe Einteilungen und erstelle automatisiert Pläne. Daten werden lokal gespeichert.</p>
 
     <div class="grid">
       <div class="card">
@@ -20,8 +20,8 @@
           <select id="role">
             <option value="RiLa">RiLa (Richter/Lader)</option>
             <option value="Fhr">Fhr (Fahrer)</option>
-            <option value="WM">WM (Wachtmeister)</option>
-            <option value="LT">LT (Leutnant)</option>
+            <option value="WM">Wm (Wachtmeister)</option>
+            <option value="LT">Lt (Leutnant)</option>
           </select>
           <select id="status">
             <option value="available">Verfügbar</option>
@@ -51,10 +51,10 @@
           <label style="flex:0 0 160px">Anzahl Panzer</label>
           <input id="tankCount" type="number" min="0" max="4" value="2" style="width:80px" />
           <div class="flex" style="margin-left:auto">
-            <label class="compact">Aufklärung (Größe)</label>
+            <label class="compact">Aufklärung (Grösse)</label>
             <input id="aufkSize" type="number" min="0" value="1" style="width:70px" />
-            <label class="compact">Absperr (Größe)</label>
-            <input id="absSize" type="number" min="0" value="1" style="width:70px" />
+            <label class="compact">Absperr (Grösse)</label>
+            <input id="abssize" type="number" min="0" value="1" style="width:70px" />
           </div>
         </div>
 
@@ -88,7 +88,7 @@ let state = {
   people: [], // {id,name,role,status,fixedTank:null}
   tankCount: 2,
   aufkSize: 1,
-  absSize: 1,
+  abssize: 1,
   lastPlan: null
 };
 
@@ -111,7 +111,7 @@ const importBtn = document.getElementById('importBtn');
 const importArea = document.getElementById('importArea');
 const tankCountIn = document.getElementById('tankCount');
 const aufkIn = document.getElementById('aufkSize');
-const absIn = document.getElementById('absSize');
+const absIn = document.getElementById('abssize');
 const autoBtn = document.getElementById('autoPlan');
 const planArea = document.getElementById('planArea');
 const leftovers = document.getElementById('leftovers');
@@ -123,7 +123,7 @@ const specialAssignments = document.getElementById('specialAssignments');
 function refreshInputs(){
   tankCountIn.value = state.tankCount;
   aufkIn.value = state.aufkSize;
-  absIn.value = state.absSize;
+  absIn.value = state.abssize;
 }
 
 // --- Render Personen ---
@@ -174,20 +174,20 @@ function renderPeople() {
     right.style.alignItems = 'center';
 
     // --- Status Dropdown ---
-    const statusSelect = document.createElement('select');
+    const statusselect = document.createElement('select');
     ['available','wache','kueche','urlaub','nichtplanbar'].forEach(s=>{
       const opt = document.createElement('option');
       opt.value = s;
       opt.textContent = s.charAt(0).toUpperCase() + s.slice(1);
       if(s === p.status) opt.selected = true;
-      statusSelect.appendChild(opt);
+      statusselect.appendChild(opt);
     });
-    statusSelect.onchange = ()=>{
-      p.status = statusSelect.value;
+    statusselect.onchange = ()=>{
+      p.status = statusselect.value;
       saveState();
       renderPeople();
     };
-    right.appendChild(statusSelect);
+    right.appendChild(statusselect);
 
     // --- Fixed Tank Auswahl ---
     const fixed = document.createElement('select');
@@ -225,13 +225,13 @@ addBtn.onclick = ()=>{
 }
 
 // --- Speicher & Import/Export ---
-saveBtn.onclick = ()=>{state.tankCount = Number(tankCountIn.value); state.aufkSize = Number(aufkIn.value); state.absSize = Number(absIn.value); saveState(); alert('Gespeichert')}
+saveBtn.onclick = ()=>{state.tankCount = Number(tankCountIn.value); state.aufkSize = Number(aufkIn.value); state.abssize = Number(absIn.value); saveState(); alert('Gespeichert')}
 exportBtn.onclick = ()=>{const data = JSON.stringify(state,null,2); importArea.value = data; alert('JSON im Feld unten eingefügt. Kopiere zum Export.')}
 importBtn.onclick = ()=>{try{const parsed = JSON.parse(importArea.value); state = parsed; saveState(); refreshInputs(); renderPeople(); renderPlan(state.lastPlan); alert('Import erfolgreich')}catch(e){alert('Ungültiges JSON') }}
 
 tankCountIn.onchange = ()=>{state.tankCount = Number(tankCountIn.value); saveState(); renderPeople()}
 aufkIn.onchange = ()=>{state.aufkSize = Number(aufkIn.value); saveState()}
-absIn.onchange = ()=>{state.absSize = Number(absIn.value); saveState()}
+absIn.onchange = ()=>{state.abssize = Number(absIn.value); saveState()}
 
 clearPlanBtn.onclick = ()=>{state.lastPlan=null; saveState(); renderPlan(null); leftovers.innerHTML=''; specialAssignments.innerHTML='';}
 
@@ -270,7 +270,7 @@ function autoPlan(){
   state.people.forEach(p=>{
     if(!p.fixedTank || p.status!=='available') return;
     if(p.fixedTank==='aufk'){ if(plan.aufk.length < state.aufkSize) plan.aufk.push(p); }
-    else if(p.fixedTank==='abs'){ if(plan.abs.length < state.absSize) plan.abs.push(p); }
+    else if(p.fixedTank==='abs'){ if(plan.abs.length < state.abssize) plan.abs.push(p); }
     else{
       const idx = Number(p.fixedTank)-1; if(idx>=0 && idx<plan.tanks.length){
         const slot = plan.tanks[idx].slots.find(s=>s.role===p.role && !s.assigned);
@@ -299,13 +299,13 @@ function autoPlan(){
   const remaining = state.people.filter(p=>!plan.tanks.some(t=>t.slots.some(s=>s.assigned && s.assigned.id===p.id)));
   remaining.forEach(p=>{
     if(p.fixedTank==='aufk' && plan.aufk.length<state.aufkSize) plan.aufk.push(p);
-    else if(p.fixedTank==='abs' && plan.abs.length<state.absSize) plan.abs.push(p);
+    else if(p.fixedTank==='abs' && plan.abs.length<state.abssize) plan.abs.push(p);
   });
 
   // Restliche verfügbare auf Dets verteilen
   const stillRemaining = remaining.filter(p=>p.status==='available');
   for(let i=plan.aufk.length;i<state.aufkSize;i++){ const p = stillRemaining.shift(); if(!p) break; plan.aufk.push(p);}
-  for(let i=plan.abs.length;i<state.absSize;i++){ const p = stillRemaining.shift(); if(!p) break; plan.abs.push(p);}
+  for(let i=plan.abs.length;i<state.abssize;i++){ const p = stillRemaining.shift(); if(!p) break; plan.abs.push(p);}
 
   state.lastPlan = plan; saveState();
   renderPlan(plan);
