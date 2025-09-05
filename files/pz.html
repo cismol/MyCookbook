@@ -191,7 +191,8 @@ function renderPeople(){
 	
 	
   })
-}function renderPeople() {
+}
+function renderPeople() {
   peopleList.innerHTML = '';
   if(state.people.length === 0){
     peopleList.innerHTML = '<p class="compact">Keine Personen angelegt.</p>';
@@ -226,25 +227,12 @@ function renderPeople(){
     };
     right.appendChild(statusSelect);
 
-    // --- Fix Checkbox ---
-    const fixCheckbox = document.createElement('input');
-    fixCheckbox.type = 'checkbox';
-    fixCheckbox.checked = !!p.fixedTank;
-    fixCheckbox.title = 'Fixe Einteilung erlaubt';
-    fixCheckbox.onchange = ()=>{
-      if(!fixCheckbox.checked) p.fixedTank = null; // Checkbox deaktiviert → Fix-Zuweisung löschen
-      saveState();
-      renderPeople();
-    };
-    right.appendChild(fixCheckbox);
-
     // --- Fixed Tank Auswahl ---
     const fixed = document.createElement('select');
     fixed.innerHTML = '<option value="">nicht fix</option>' +
       Array.from({length:state.tankCount},(_,i)=>`<option value="${i+1}">Panzer ${i+1}</option>`).join('') +
       '<option value="aufk">Aufkl.</option><option value="abs">Abspr.</option>';
     fixed.value = p.fixedTank || '';
-    fixed.disabled = !fixCheckbox.checked; // Auswahl nur aktiv, wenn Checkbox aktiviert
     fixed.onchange = ()=>{
       p.fixedTank = fixed.value || null;
       saveState();
