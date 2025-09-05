@@ -192,3 +192,33 @@ textarea {
     padding: 6px;
   }
 }
+:root {
+  --bg: #2c2f1f;         /* dunkleres Olivgrün Hintergrund */
+  --card: #4a4f33;       /* hellere Kartenfarbe */
+  --accent: #a2b47c;     /* helles Tarngrün für Überschriften/Highlights */
+  --muted: #d0c9a5;      /* Beige für Text/Labels */
+  --success: #88b04b;    /* Olivgrün für Erfolge */
+  --warn: #d9a066;       /* Orange-Braun für Warnungen */
+  --empty: #c14444;      /* Rot für leere/freie Plätze */
+  --slot: #5c6142;       /* Slot-Hintergrund */
+  --person: rgba(255,255,255,0.07); /* Hintergrund Personeneinträge */
+}
+
+.slot {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--slot);
+  margin-bottom: 8px;
+  color: var(--muted);
+}
+
+/* Hervorhebung für leere/freie Slots */
+.slot .warn {
+  color: #fff;
+  background-color: var(--empty);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
