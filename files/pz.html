@@ -164,32 +164,77 @@ function refreshInputs(){
   absIn.value = state.absSize;
 }
 
-// --- Render Personen ---
-function renderPeople(){
-  peopleList.innerHTML='';
-  if(state.people.length===0){peopleList.innerHTML='<p class="compact">Keine Personen angelegt.</p>';return}
-  state.people.forEach(p=>{
-    const el = document.createElement('div'); el.className='person';
+function renderPeople() {
+  peopleList.innerHTML = '';
+  if(state.people.length === 0){
+    peopleList.innerHTML = '<p class="compact">Keine Personen angelegt.</p>';
+    return;
+  }
+
+  state.people.forEach(p => {
+    const el = document.createElement('div');
+    el.className = 'person';
+
     const left = document.createElement('div');
     left.innerHTML = `<div style="font-weight:600">${p.name}</div><div class="compact">${p.role} • ${p.status}</div>`;
+
     const right = document.createElement('div');
-    right.style.display='flex'; right.style.gap='8px'; right.style.alignItems='center';
+    right.style.display = 'flex';
+    right.style.gap = '8px';
+    right.style.alignItems = 'center';
 
-    const fixed = document.createElement('select');
-    fixed.innerHTML = '<option value="">nicht fix</option>' +
-      Array.from({length:state.tankCount},(_,i)=>`<option value="${i+1}">Panzer ${i+1}</option>`).join('') +
-      '<option value="aufk">Aufkl.</option><option value="abs">Abspr.</option>';
-    fixed.value = p.fixedTank||'';
-    fixed.onchange = ()=>{p.fixedTank = fixed.value||null; saveState(); renderPeople()}
-    right.appendChild(fixed);
+    // --- Status Dropdown ---
+    const statusSelect = document.createElement('select');
+    ['available','wache','kueche','urlaub','nichtplanbar'].forEach(s=>{
+      const opt = document.createElement('option');
+      opt.value = s;
+      opt.textContent = s.charAt(0).toUpperCase() + s.slice(1);
+      if(s === p.status) opt.selected = true;
+      statusSelect.appendChild(opt);
+    });
+    statusSelect.onchange = ()=>{
+      p.status = statusSelect.value;
+      saveState();
+      renderPeople();
+    };
+    right.appendChild(statusSelect);
 
-    const del = document.createElement('button'); del.textContent='✕'; del.title='Löschen'; del.onclick=()=>{state.people = state.people.filter(x=>x.id!==p.id); saveState(); renderPeople()}
+    // --- Fix Checkbox ---
+    const fixCheckbox = document.createElement('input');
+    fixCheckbox.type = 'checkbox';
+    fixCheckbox.checked = !!p.fixedTank;
+    fixCheckbox.title = 'Fixe Einteilung erlaubt';
+    fixCheckbox.onchange = ()=>{
+      if(!fixCheckbox.checked) p.fixedTank = null;
+      saveState();
+      renderPeople();
+    };
+    right.appendChild(fixCheckbox);
+
+    // --- Fixed Tank Auswahl ---
+    if(fixCheckbox.checked){
+      const fixed = document.createElement('select');
+      fixed.innerHTML = '<option value="">nicht fix</option>' +
+        Array.from({length:state.tankCount},(_,i)=>`<option value="${i+1}">Panzer ${i+1}</option>`).join('') +
+        '<option value="aufk">Aufkl.</option><option value="abs">Abspr.</option>';
+      fixed.value = p.fixedTank||'';
+      fixed.onchange = ()=>{p.fixedTank = fixed.value||null; saveState(); renderPeople();}
+      right.appendChild(fixed);
+    }
+
+    // --- Löschen ---
+    const del = document.createElement('button');
+    del.textContent = '✕';
+    del.title = 'Löschen';
+    del.onclick = ()=>{state.people = state.people.filter(x => x.id !== p.id); saveState(); renderPeople();}
     right.appendChild(del);
 
-    el.appendChild(left); el.appendChild(right);
+    el.appendChild(left);
+    el.appendChild(right);
     peopleList.appendChild(el);
-  })
+  });
 }
+
 
 // --- Personen hinzufügen ---
 addBtn.onclick = ()=>{
