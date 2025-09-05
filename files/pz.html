@@ -329,10 +329,10 @@ function renderPlan(plan){
     wrapper.appendChild(box);
   });
   const dbox = document.createElement('div'); dbox.className='tank card';
-  dbox.innerHTML = '<h3>Aufklärung</h3>' + (plan.aufk.map(p=>`<div class="slot"><div>Mitglied</div><div><strong>${p.name}</strong></div></div>`).join('') || '<div class="compact warn">leer</div>');
+  dbox.innerHTML = '<h3>Aufklärung</h3>' + (plan.aufk.map(p=>`<div class="slot"><div>${p.role}</div><div><strong>${p.name}</strong></div></div>`).join('') || '<div class="compact warn">leer</div>');
   wrapper.appendChild(dbox);
   const abox = document.createElement('div'); abox.className='tank card';
-  abox.innerHTML = '<h3>Absperrdet</h3>' + (plan.abs.map(p=>`<div class="slot"><div>Mitglied</div><div><strong>${p.name}</strong></div></div>`).join('') || '<div class="compact warn">leer</div>');
+  abox.innerHTML = '<h3>Absperrdet</h3>' + (plan.abs.map(p=>`<div class="slot"><div>${p.role}</div><div><strong>${p.name}</strong></div></div>`).join('') || '<div class="compact warn">leer</div>');
   wrapper.appendChild(abox);
   planArea.appendChild(wrapper);
 }
