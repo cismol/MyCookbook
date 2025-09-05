@@ -332,7 +332,7 @@ function renderPlan(plan){
   dbox.innerHTML = '<h3>Aufklärung</h3>' + (plan.aufk.map(p=>`<div class="slot"><div>Mitglied</div><div><strong>${p.name}</strong></div></div>`).join('') || '<div class="compact warn">leer</div>');
   wrapper.appendChild(dbox);
   const abox = document.createElement('div'); abox.className='tank card';
-  abox.innerHTML = '<h3>Absperr</h3>' + (plan.abs.map(p=>`<div class="slot"><div>Mitglied</div><div><strong>${p.name}</strong></div></div>`).join('') || '<div class="compact warn">leer</div>');
+  abox.innerHTML = '<h3>Absperrdet</h3>' + (plan.abs.map(p=>`<div class="slot"><div>Mitglied</div><div><strong>${p.name}</strong></div></div>`).join('') || '<div class="compact warn">leer</div>');
   wrapper.appendChild(abox);
   planArea.appendChild(wrapper);
 }
@@ -370,6 +370,6 @@ refreshInputs(); renderPeople(); renderPlan(state.lastPlan);
 
 autoBtn.onclick = ()=>{autoPlan()};
 </script>
-<footer><p>Created by Lt Mjölnir, 29/1</footer>
+<footer><p>Created by Lt Mjölnir, 29/1</br></footer>
 </body>
 </html>
