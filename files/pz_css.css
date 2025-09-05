@@ -1,17 +1,19 @@
 :root {
-  --bg: #3c3f28;         /* dunkelgrün-braun Hintergrund */
-  --card: #5a5d40;       /* leicht hellere Kartenfarbe */
-  --accent: #a7b58c;     /* helles Tarngrün */
-  --muted: #c2bca3;      /* Beige für Labels/Text */
+  --bg: #2c2f1f;         /* dunkleres Olivgrün Hintergrund */
+  --card: #4a4f33;       /* etwas hellere Kartenfarbe */
+  --accent: #a2b47c;     /* helles Tarngrün für Überschriften/Highlights */
+  --muted: #d0c9a5;      /* Beige für Text/Labels */
   --success: #88b04b;    /* Olivgrün für Erfolge */
   --warn: #d9a066;       /* Orange-Braun für Warnungen */
+  --slot: #5c6142;       /* Unterschiedliche Slot-Hintergrundfarbe */
+  --person: rgba(255,255,255,0.07); /* Hintergrund Personeneinträge */
 }
 
 html, body {
   height: 100%;
   margin: 0;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  background: linear-gradient(180deg, var(--bg) 0%, #2f3220 100%);
+  background: linear-gradient(180deg, var(--bg) 0%, #1f2115 100%);
   color: var(--muted);
   padding: 20px;
 }
@@ -27,22 +29,23 @@ h1, h2, h3 {
 
 .card {
   background: var(--card);
-  padding: 14px;
+  padding: 18px;
   border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+  margin-bottom: 16px;  /* mehr Abstand zwischen Karten */
 }
 
 input[type=text], select, input[type=number], textarea {
   width: 100%;
   padding: 8px;
   border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
   background: transparent;
   color: var(--muted);
 }
 
 select option {
-  color: #000;  /* sorgt dafür, dass Text sichtbar bleibt */
+  color: #000;
   background-color: #fff;
 }
 
@@ -50,29 +53,41 @@ button {
   background: linear-gradient(180deg, var(--accent), #889974);
   border: none;
   color: #1a1a1a;
-  padding: 8px 10px;
+  padding: 8px 12px;
   border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
+  transition: transform 0.1s;
+}
+
+button:hover {
+  transform: scale(1.05);
 }
 
 .person {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px;
+  padding: 10px;
   border-radius: 8px;
-  background: rgba(255,255,255,0.05);
-  margin-bottom: 8px;
+  background: var(--person);
+  margin-bottom: 10px;
 }
 
 .slot {
   display: flex;
   justify-content: space-between;
-  padding: 6px;
+  padding: 8px;
   border-radius: 8px;
-  background: rgba(255,255,255,0.02);
-  margin-bottom: 6px;
+  background: var(--slot);
+  margin-bottom: 8px;
+}
+
+.tank {
+  padding: 12px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, var(--card), var(--slot));
+  margin-bottom: 12px;
 }
 
 .warn {
@@ -94,5 +109,11 @@ textarea {
 .list {
   max-height: 360px;
   overflow: auto;
-  margin-top: 10px;
+  margin-top: 12px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 24px;  /* mehr Abstand zwischen linken & rechten Bereich */
 }
