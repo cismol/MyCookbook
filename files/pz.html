@@ -182,4 +182,103 @@ addBtn.onclick = ()=>{
   const name = nameIn.value.trim(); if(!name) return alert('Bitte Namen eingeben');
   const role = roleIn.value; const status = statusIn.value;
   state.people.push({id:uid(),name,role,status,fixedTank:null});
-  nameIn.value=''; save
+  nameIn.value=''; saveState(); renderPeople();
+}
+
+saveBtn.onclick = ()=>{state.tankCount = Number(tankCountIn.value); state.aufkSize = Number(aufkIn.value); state.absSize = Number(absIn.value); saveState(); alert('Gespeichert')}
+exportBtn.onclick = ()=>{const data = JSON.stringify(state,null,2); importArea.value = data; alert('JSON im Feld unten eingefügt. Kopiere zum Export.')}
+importBtn.onclick = ()=>{try{const parsed = JSON.parse(importArea.value); state = parsed; saveState(); refreshInputs(); renderPeople(); renderPlan(state.lastPlan); renderSpecialAssignments(); alert('Import erfolgreich')}catch(e){alert('Ungültiges JSON') }}
+
+tankCountIn.onchange = ()=>{state.tankCount = Number(tankCountIn.value); saveState(); renderPeople()}
+aufkIn.onchange = ()=>{state.aufkSize = Number(aufkIn.value); saveState()}
+absIn.onchange = ()=>{state.absSize = Number(absIn.value); saveState()}
+
+clearPlanBtn.onclick = ()=>{state.lastPlan=null; saveState(); renderPlan(null); leftovers.innerHTML=''; specialAssignments.innerHTML='';}
+
+// --- Planung ---
+function createEmptyPlan(tankCount){
+  const tanks = [];
+  const names = ['UNO','DUE','TRE','QUATTRO'];
+  for(let i=0;i<tankCount;i++){
+    const tname = names[i]||('P'+(i+1));
+    const slots = [];
+    if(i===0){ // UNO
+      slots.push({role:'LT',assigned:null});
+      slots.push({role:'RiLa',assigned:null});
+      slots.push({role:'RiLa',assigned:null});
+      slots.push({role:'Fhr',assigned:null});
+    } else {
+      slots.push({role:'WM',assigned:null});
+      slots.push({role:'RiLa',assigned:null});
+      slots.push({role:'RiLa',assigned:null});
+      slots.push({role:'Fhr',assigned:null});
+    }
+    tanks.push({name:tname,slots});
+  }
+  return {tanks,aufk:[],abs:[]}
+}
+
+function autoPlan(){
+  const availablePeople = state.people.filter(p=>p.status==='available');
+
+  const plan = createEmptyPlan(state.tankCount);
+
+  function assignFixed(){
+    state.people.forEach(p=>{
+      if(!p.fixedTank) return;
+      if(p.status!=='available') return; // block if not available
+      if(p.fixedTank==='aufk'){ if(plan.aufk.length < state.aufkSize){ plan.aufk.push(p); } }
+      else if(p.fixedTank==='abs'){ if(plan.abs.length < state.absSize){ plan.abs.push(p); } }
+      else {
+        const idx = Number(p.fixedTank)-1; if(idx>=0 && idx<plan.tanks.length){
+          const slots = plan.tanks[idx].slots;
+          const slot = slots.find(s=>s.role===p.role && !s.assigned);
+          if(slot) slot.assigned = p;
+        }
+      }
+    })
+  }
+
+  assignFixed();
+
+  const pools = {RiLa:[],Fhr:[],WM:[],LT:[]};
+  availablePeople.forEach(p=>{ if(p.role in pools) pools[p.role].push(p); });
+
+  function takeFromPool(role){
+    if(pools[role] && pools[role].length>0) return pools[role].shift();
+    if(role==='WM'){
+      if(pools['LT'] && pools['LT'].length>0) return pools['LT'].shift();
+    }
+    return null;
+  }
+
+  plan.tanks.forEach((tank,ti)=>{
+    tank.slots.forEach(slot=>{
+      if(slot.assigned) return;
+      const needed = slot.role;
+      const pick = takeFromPool(needed);
+      if(pick){ slot.assigned = pick; }
+    })
+  })
+
+  const assignedIds = new Set(); plan.tanks.forEach(t=>t.slots.forEach(s=>{ if(s.assigned) assignedIds.add(s.assigned.id)}));
+  const remaining = state.people.filter(p=>!assignedIds.has(p.id) && p.status==='available');
+
+  state.people.forEach(p=>{ if(p.fixedTank==='aufk' && p.status==='available'){ if(!plan.aufk.find(x=>x && x.id===p.id) && plan.aufk.length < state.aufkSize) plan.aufk.push(p); }
+    if(p.fixedTank==='abs' && p.status==='available'){ if(!plan.abs.find(x=>x && x.id===p.id) && plan.abs.length < state.absSize) plan.abs.push(p); }
+  });
+
+  for(let i=plan.aufk.length;i<state.aufkSize;i++){
+    const cand = remaining.shift(); if(!cand) break; plan.aufk.push(cand);
+  }
+  for(let i=plan.abs.length;i<state.absSize;i++){
+    const cand = remaining.shift(); if(!cand) break; plan.abs.push(cand);
+  }
+
+  const leftoversArr = remaining.slice();
+
+  state.lastPlan = plan; saveState(); renderPlan(plan); renderLeftovers(leftoversArr); renderSpecialAssignments();
+}
+
+function renderPlan(plan){ planArea.innerHTML='';
+  if(!plan
