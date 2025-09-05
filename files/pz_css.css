@@ -117,3 +117,78 @@ textarea {
   grid-template-columns: 360px 1fr;
   gap: 24px;  /* mehr Abstand zwischen linken & rechten Bereich */
 }
+/* --- Responsive Layout --- */
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr; /* von zwei Spalten auf eine Spalte */
+    gap: 16px;
+  }
+
+  .card {
+    padding: 14px;
+  }
+
+  .row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .row label {
+    flex: unset;
+  }
+
+  input[type=text], select, input[type=number], textarea {
+    font-size: 14px;
+  }
+
+  button {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .flex {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tank {
+    padding: 10px;
+  }
+
+  .list {
+    max-height: 250px;
+  }
+}
+
+@media (max-width: 500px) {
+  body {
+    padding: 12px;
+  }
+
+  h1 {
+    font-size: 18px;
+  }
+
+  h2 {
+    font-size: 16px;
+  }
+
+  h3 {
+    font-size: 15px;
+  }
+
+  input[type=text], select, input[type=number], textarea {
+    font-size: 13px;
+    padding: 6px;
+  }
+
+  button {
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  .slot, .person {
+    padding: 6px;
+  }
+}
