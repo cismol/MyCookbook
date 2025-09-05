@@ -4,45 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Panzerzug - Personalplanung</title>
-  <style>
-    :root{
-      --bg:#0f1724;
-      --card:#0b1220;
-      --accent:#9fb8ff;
-      --muted:#98a2b3;
-      --success:#7ee787;
-      --input-text:#e6eef8;
-      --input-bg:transparent
-    }
-    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial}
-    body{background:linear-gradient(180deg,#041028 0%, #071428 100%);color:#e6eef8;padding:20px}
-    .container{max-width:1100px;margin:0 auto}
-    h1{margin:0 0 8px;font-size:20px}
-    .grid{display:grid;grid-template-columns:360px 1fr;gap:18px}
-    .card{background:var(--card);padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(3,9,23,.6)}
-    label{display:block;font-size:13px;margin-bottom:6px;color:var(--muted)}
-    input[type=text],select,input[type=number]{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:var(--input-bg);color:var(--input-text)}
-    select option{background:var(--card);color:var(--input-text)}
-    button{background:linear-gradient(180deg,var(--accent),#6f97ff);border:none;color:#05203b;padding:8px 10px;border-radius:10px;font-weight:600;cursor:pointer}
-    .small{font-size:13px;padding:6px 8px;border-radius:8px}
-    .list{max-height:360px;overflow:auto;margin-top:10px}
-    .row{display:flex;gap:8px;align-items:center}
-    .person{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;background:rgba(255,255,255,0.02);margin-bottom:8px}
-    .badge{font-size:12px;padding:6px 8px;border-radius:999px;background:rgba(255,255,255,0.03)}
-    .controls{display:flex;gap:8px;margin-top:10px}
-    .plan{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
-    .tank{padding:10px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);}
-    .tank h3{margin:0 0 8px;font-size:15px}
-    .slot{display:flex;justify-content:space-between;padding:6px;border-radius:8px;background:rgba(255,255,255,0.01);margin-bottom:6px}
-    .warn{color:#ffd2a8}
-    .success{color:var(--success)}
-    .footer{margin-top:12px;color:var(--muted);font-size:13px}
-    .compact{font-size:13px}
-    .fixed-flag{font-size:12px;color:#ffd6e0}
-    .controls-right{margin-left:auto}
-    .flex{display:flex;align-items:center;gap:8px}
-    textarea{width:100%;height:120px;background:transparent;color:inherit;border-radius:8px;border:1px solid rgba(255,255,255,0.04);padding:8px}
-  </style>
+<link rel="stylesheet" href="panzerzug.css">
 </head>
 <body>
   <div class="container">
